@@ -52,3 +52,15 @@ def test_make_plan_uses_input_topic_when_missing() -> None:
     planner = Planner(mock_llm)
     plan = planner.make_plan("fallback topic")
     assert plan.topic == "fallback topic"
+
+
+def test_make_plan_uses_default_stop_conditions() -> None:
+    mock_llm = MagicMock()
+    mock_llm.json.return_value = {
+        "topic": "test",
+        "queries": ["q1"],
+        "subquestions": ["sq1"],
+    }
+    planner = Planner(mock_llm)
+    plan = planner.make_plan("test topic")
+    assert plan.stop_conditions == {"max_docs": 100, "coverage_threshold": 0.8}

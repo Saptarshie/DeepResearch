@@ -5,7 +5,7 @@ from typing import Any
 from deepresearch.schemas import ResearchPlan
 
 SYSTEM_PROMPT = (
-    "You are a INTELLIGENT AND HARDWORKING research planner. Given a topic, "
+    "You are an INTELLIGENT AND HARDWORKING research planner. Given a topic, "
     "generate a structured research plan.\n"
     "Return strictly in JSON format (DONT include anything else ...otherwise "
     "parsing will FAIL) with:\n"
@@ -36,10 +36,12 @@ class Planner:
         missing = required_keys - set(data.keys())
         if missing:
             raise ValueError(f"LLM plan response missing required keys: {missing}")
-        return ResearchPlan(
-            topic=data.get("topic", topic),
-            subquestions=data.get("subquestions", []),
-            queries=data.get("queries", []),
-            source_preferences=data.get("source_preferences", []),
-            stop_conditions=data.get("stop_conditions", {}),
-        )
+        kwargs: dict[str, Any] = {
+            "topic": data.get("topic", topic),
+            "subquestions": data.get("subquestions", []),
+            "queries": data.get("queries", []),
+            "source_preferences": data.get("source_preferences", []),
+        }
+        if "stop_conditions" in data:
+            kwargs["stop_conditions"] = data["stop_conditions"]
+        return ResearchPlan(**kwargs)
