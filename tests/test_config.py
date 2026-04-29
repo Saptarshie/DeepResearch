@@ -12,10 +12,16 @@ def test_config_fixture(config: Config) -> None:
 
 
 def test_config_from_env_uses_defaults(monkeypatch) -> None:
-    # Ensure no env vars are set
-    for key in os.environ:
-        if key.startswith(("SEARXNG", "MINIMAX", "ANTHROPIC", "MAX_", "FETCH", "BROWSER", "SYNTHESIZER", "INDEXES", "MIN_ACCUMULATOR", "WORKSPACE", "LOG_LEVEL", "ENABLE_BROWSER")):
-            monkeypatch.delenv(key, raising=False)
+    env_vars = [
+        "SEARXNG_BASE_URL", "MINIMAX_API_KEY", "MINIMAX_MODEL",
+        "ANTHROPIC_BASE_URL", "ANTHROPIC_API_KEY", "MAX_DOCS",
+        "CRITIQUE_BATCH_SIZE", "FETCH_TIMEOUT", "BROWSER_WAIT_MS",
+        "MAX_TOKENS", "SYNTHESIZER_MAX_TOKENS", "MAX_INDEXER_DEPTH",
+        "INDEXES_DIR", "MIN_ACCUMULATOR_THRESHOLD", "WORKSPACE_DIR",
+        "MAX_DEPTH", "MIN_CONTENT_LENGTH", "LOG_LEVEL", "ENABLE_BROWSER",
+    ]
+    for var in env_vars:
+        monkeypatch.delenv(var, raising=False)
     cfg = Config.from_env()
     assert cfg.searxng_base_url == "http://localhost:8080"
     assert cfg.max_docs == 100
@@ -25,8 +31,19 @@ def test_config_from_env_uses_defaults(monkeypatch) -> None:
 def test_config_from_env_reads_env_vars(monkeypatch) -> None:
     monkeypatch.setenv("SEARXNG_BASE_URL", "http://custom:8080")
     monkeypatch.setenv("MAX_DOCS", "50")
+    monkeypatch.setenv("FETCH_TIMEOUT", "15.5")
     monkeypatch.setenv("ENABLE_BROWSER", "false")
     cfg = Config.from_env()
     assert cfg.searxng_base_url == "http://custom:8080"
     assert cfg.max_docs == 50
+    assert cfg.fetch_timeout == 15.5
     assert cfg.enable_browser is False
+
+    # Test truthy boolean strings
+    monkeypatch.setenv("ENABLE_BROWSER", "1")
+    cfg2 = Config.from_env()
+    assert cfg2.enable_browser is True
+
+    monkeypatch.setenv("ENABLE_BROWSER", "yes")
+    cfg3 = Config.from_env()
+    assert cfg3.enable_browser is True
