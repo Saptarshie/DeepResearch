@@ -16,13 +16,14 @@ class ReportBuilder:
         return re.sub(r'[^a-zA-Z0-9_\-]', '_', name).strip('_')
 
     def build_report(self, topics_json: dict) -> str:
-        report_file = Path("report-content.md")
+        report_file = Path(self.config.workspace_dir) / "report-content.md"
         if report_file.exists():
             report_file.unlink()
             
+        scratch_pad_path = Path(self.config.workspace_dir) / "scratch_pad.md"
         scratch_pad = ""
-        if Path("scratch_pad.md").exists():
-            scratch_pad = Path("scratch_pad.md").read_text(encoding="utf-8")
+        if scratch_pad_path.exists():
+            scratch_pad = scratch_pad_path.read_text(encoding="utf-8")
             
         rolling_summary = "This report is just starting."
         

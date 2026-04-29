@@ -116,10 +116,12 @@ URL: {url}
                 logger.warning("Error processing document: %s", e)
                 
         # Save final state for debugging & usage
-        with open("scratch_pad.md", "w", encoding="utf-8") as f:
+        workspace = Path(self.config.workspace_dir)
+        workspace.mkdir(parents=True, exist_ok=True)
+        with open(workspace / "scratch_pad.md", "w", encoding="utf-8") as f:
             f.write(scratch_pad)
             
-        with open("topics.json", "w", encoding="utf-8") as f:
+        with open(workspace / "topics.json", "w", encoding="utf-8") as f:
             json.dump(topics_json, f, indent=2)
             
         return topics_json
