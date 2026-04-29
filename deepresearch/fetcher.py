@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 import asyncio
+import contextlib
 from dataclasses import dataclass
 from typing import Any
+
 import httpx
 
 
@@ -85,20 +88,17 @@ class PageFetcher:
         )
 
     async def fetch(self, url: str, force_browser: bool = False) -> FetchResult:
-        last_error = None
         for attempt in range(1, self.max_retries + 1):
             try:
                 if force_browser and self.enable_browser:
                     return await self.fetch_browser(url)
                 res = await self.fetch_http(url)
-                if len(res.html.strip()) < 500:
-                    if self.enable_browser:
-                        return await self.fetch_browser(url)
+                if len(res.html.strip()) < 500 and self.enable_browser:
+                    return await self.fetch_browser(url)
                 return res
             except asyncio.CancelledError:
                 raise
-            except Exception as e:
-                last_error = e
+            except Exception:
                 if attempt < self.max_retries:
                     await asyncio.sleep(2 ** (attempt - 1))
                     continue
@@ -108,24 +108,18 @@ class PageFetcher:
                     except Exception:
                         pass
                 raise
-        raise last_error
+        raise RuntimeError("Unexpected end of fetch loop")
 
     async def close(self) -> None:
         if self._http_client is not None:
-            try:
+            with contextlib.suppress(Exception):
                 await self._http_client.aclose()
-            except Exception:
-                pass
             self._http_client = None
         if self._browser is not None:
-            try:
+            with contextlib.suppress(Exception):
                 await self._browser.close()
-            except Exception:
-                pass
             self._browser = None
         if self._playwright is not None:
-            try:
+            with contextlib.suppress(Exception):
                 await self._playwright.stop()
-            except Exception:
-                pass
             self._playwright = None

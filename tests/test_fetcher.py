@@ -1,17 +1,21 @@
 from __future__ import annotations
-import pytest
+
+from collections.abc import AsyncGenerator
 from unittest.mock import AsyncMock, MagicMock, patch
-from deepresearch.fetcher import PageFetcher, FetchResult
+
+import pytest
+
+from deepresearch.fetcher import FetchResult, PageFetcher
 
 
 @pytest.fixture
-async def fetcher():
+async def fetcher() -> AsyncGenerator[PageFetcher, None]:
     f = PageFetcher(timeout=5.0, max_retries=1)
     yield f
     await f.close()
 
 
-async def test_fetch_http_success(fetcher) -> None:
+async def test_fetch_http_success(fetcher: PageFetcher) -> None:
     mock_response = MagicMock()
     mock_response.url = "http://example.com"
     mock_response.status_code = 200
@@ -27,7 +31,7 @@ async def test_fetch_http_success(fetcher) -> None:
         assert "Hello World" in result.html
 
 
-async def test_fetcher_close_releases_resources(fetcher) -> None:
+async def test_fetcher_close_releases_resources(fetcher: PageFetcher) -> None:
     # Trigger client creation
     _ = await fetcher._get_http_client()
     assert fetcher._http_client is not None
@@ -35,15 +39,30 @@ async def test_fetcher_close_releases_resources(fetcher) -> None:
     assert fetcher._http_client is None
 
 
-async def test_fetch_browser_fallback(fetcher) -> None:
-    # This test verifies the fetch method falls back to browser when HTML is too short.
-    # Since we can't easily mock Playwright, we'll test the threshold logic indirectly.
-    # For now, just verify fetch() exists and returns a FetchResult.
-    # NOTE: Actual browser test requires Playwright; skip if not available.
-    pytest.skip("Browser test requires Playwright installation")
+async def test_fetch_browser_fallback_on_short_html(fetcher: PageFetcher) -> None:
+    with patch.object(fetcher, "fetch_http", new_callable=AsyncMock) as mock_http, \
+         patch.object(fetcher, "fetch_browser", new_callable=AsyncMock) as mock_browser:
+        mock_http.return_value = FetchResult(
+            url="http://example.com",
+            final_url="http://example.com",
+            status_code=200,
+            html="<html></html>",
+            fetch_mode="http",
+        )
+        mock_browser.return_value = FetchResult(
+            url="http://example.com",
+            final_url="http://example.com",
+            status_code=200,
+            html="<html><body>Full content</body></html>",
+            fetch_mode="browser",
+        )
+        result = await fetcher.fetch("http://example.com")
+        mock_http.assert_awaited_once()
+        mock_browser.assert_awaited_once()
+        assert result.fetch_mode == "browser"
 
 
-async def test_fetcher_close_with_browser(fetcher) -> None:
+async def test_fetcher_close_with_browser(fetcher: PageFetcher) -> None:
     # Mock browser and playwright
     mock_browser = AsyncMock()
     mock_playwright = AsyncMock()
