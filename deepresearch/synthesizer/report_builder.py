@@ -102,7 +102,7 @@ Write a concise updated rolling summary that captures the flowing narrative so f
         for topic, subtopics in topics_dict.items():
             path_for_node = current_path + [topic]
 
-            safe_path = [sanitize_dirname(p) for p in path_for_node]
+            safe_path = [sanitize_dirname(p) or "unknown" for p in path_for_node]
             node_dir = self.indexes_dir.joinpath(*safe_path)
 
             local_context = ""
