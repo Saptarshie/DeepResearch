@@ -50,6 +50,7 @@ class PageFetcher:
     async def fetch_http(self, url: str) -> FetchResult:
         client = await self._get_http_client()
         r = await client.get(url)
+        r.raise_for_status()
         return FetchResult(
             url=url,
             final_url=str(r.url),
@@ -61,8 +62,9 @@ class PageFetcher:
 
     async def fetch_browser(self, url: str) -> FetchResult:
         browser = await self._get_browser()
-        page = await browser.new_page()
+        page = None
         try:
+            page = await browser.new_page()
             response = await page.goto(
                 url, wait_until="networkidle", timeout=int(self.timeout * 1000)
             )
@@ -71,7 +73,8 @@ class PageFetcher:
             final_url = page.url
             status_code = response.status if response else 0
         finally:
-            await page.close()
+            if page is not None:
+                await page.close()
         return FetchResult(
             url=url,
             final_url=final_url,
@@ -92,7 +95,7 @@ class PageFetcher:
                     if self.enable_browser:
                         return await self.fetch_browser(url)
                 return res
-            except (httpx.RequestError, httpx.TimeoutException, httpx.HTTPStatusError) as e:
+            except Exception as e:
                 last_error = e
                 if attempt < self.max_retries:
                     await asyncio.sleep(2 ** (attempt - 1))
@@ -103,21 +106,24 @@ class PageFetcher:
                     except Exception:
                         pass
                 raise
-            except Exception as e:
-                last_error = e
-                if attempt < self.max_retries:
-                    await asyncio.sleep(2 ** (attempt - 1))
-                    continue
-                raise
         raise last_error or Exception("Fetch failed after retries")
 
     async def close(self) -> None:
         if self._http_client is not None:
-            await self._http_client.aclose()
+            try:
+                await self._http_client.aclose()
+            except Exception:
+                pass
             self._http_client = None
         if self._browser is not None:
-            await self._browser.close()
+            try:
+                await self._browser.close()
+            except Exception:
+                pass
             self._browser = None
         if self._playwright is not None:
-            await self._playwright.stop()
+            try:
+                await self._playwright.stop()
+            except Exception:
+                pass
             self._playwright = None
