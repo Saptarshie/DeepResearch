@@ -130,23 +130,28 @@ async def deep_search(
                 })
                 fetched = await fetcher.fetch(item.url)
                 extracted = extract_document(fetched.html, fetched.final_url)
-                normalized = _normalize_text(extracted.get("text", ""))
+                normalized = _normalize_text(extracted.text)
                 content_hash = hashlib.md5(normalized.encode()).hexdigest()
                 if content_hash in seen_content_hashes:
                     logger.info("Skipping duplicate content: %s", item.url)
                     continue
                 seen_content_hashes.add(content_hash)
-                doc = dict(extracted)
-                doc.update({
+                doc = {
                     "url": fetched.url,
                     "final_url": fetched.final_url,
                     "fetch_mode": fetched.fetch_mode,
                     "status_code": fetched.status_code,
-                })
+                    "title": extracted.title,
+                    "text": extracted.text,
+                    "author": extracted.author,
+                    "published_at": extracted.published_at,
+                    "language": extracted.language,
+                    "metadata": extracted.metadata,
+                }
                 docs.append(doc)
                 emit("document", {
                     "url": item.url,
-                    "title": extracted.get("title", ""),
+                    "title": extracted.title,
                     "docs_fetched": len(docs),
                     "max_docs": cfg.max_docs,
                     "phase": "extracted"
