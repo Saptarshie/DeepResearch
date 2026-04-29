@@ -22,28 +22,28 @@ def test_config_from_env_uses_defaults(monkeypatch) -> None:
     ]
     for var in env_vars:
         monkeypatch.delenv(var, raising=False)
-    cfg = Config.from_env()
-    assert cfg.searxng_base_url == "http://localhost:8080"
-    assert cfg.max_docs == 100
-    assert cfg.enable_browser is True
+    assert Config.from_env() == Config()
 
 
-def test_config_from_env_reads_env_vars(monkeypatch) -> None:
+def test_config_from_env_reads_typed_values(monkeypatch) -> None:
     monkeypatch.setenv("SEARXNG_BASE_URL", "http://custom:8080")
     monkeypatch.setenv("MAX_DOCS", "50")
     monkeypatch.setenv("FETCH_TIMEOUT", "15.5")
-    monkeypatch.setenv("ENABLE_BROWSER", "false")
     cfg = Config.from_env()
     assert cfg.searxng_base_url == "http://custom:8080"
     assert cfg.max_docs == 50
     assert cfg.fetch_timeout == 15.5
-    assert cfg.enable_browser is False
 
-    # Test truthy boolean strings
-    monkeypatch.setenv("ENABLE_BROWSER", "1")
-    cfg2 = Config.from_env()
-    assert cfg2.enable_browser is True
 
-    monkeypatch.setenv("ENABLE_BROWSER", "yes")
-    cfg3 = Config.from_env()
-    assert cfg3.enable_browser is True
+def test_config_from_env_parses_truthy_booleans(monkeypatch) -> None:
+    for value in ("true", "1", "yes", "TRUE", " True "):
+        monkeypatch.setenv("ENABLE_BROWSER", value)
+        cfg = Config.from_env()
+        assert cfg.enable_browser is True, f"failed for {value!r}"
+
+
+def test_config_from_env_parses_falsy_booleans(monkeypatch) -> None:
+    for value in ("false", "0", "no", "FALSE", "False", "random"):
+        monkeypatch.setenv("ENABLE_BROWSER", value)
+        cfg = Config.from_env()
+        assert cfg.enable_browser is False, f"failed for {value!r}"
