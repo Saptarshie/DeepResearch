@@ -1,9 +1,9 @@
 from __future__ import annotations
+
 import json
 import time
-from typing import Optional
+
 import anthropic
-import re
 
 try:
     from json_repair import repair_json
@@ -11,10 +11,23 @@ except ImportError:
     repair_json = None
 
 
-def fix_json_escapes(text: str) -> str:
-    start, end = text.find("{"), text.rfind("}") + 1
-    if start != -1 and end != 0:
-        text = text[start:end]
+def _extract_json_block(text: str) -> str:
+    start = text.find("{")
+    if start == -1:
+        return text
+    depth = 0
+    for i, ch in enumerate(text[start:], start):
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start : i + 1]
+    return text[start:]
+
+
+def extract_and_repair_json(text: str) -> str:
+    text = _extract_json_block(text)
     if text.startswith("```"):
         lines = text.split("\n")
         if lines[0].startswith("```json") or lines[0] == "```":
@@ -76,7 +89,7 @@ class MiniMaxClient:
         system: str = "You are a helpful research assistant.",
         max_tokens: int = 4096,
     ) -> dict:
-        text = fix_json_escapes(self.generate(prompt, system, max_tokens))
+        text = extract_and_repair_json(self.generate(prompt, system, max_tokens))
         return json.loads(text)
 
 
@@ -125,7 +138,7 @@ class ClaudeClient:
         system: str = "You are a helpful research assistant.",
         max_tokens: int = 4096,
     ) -> dict:
-        text = fix_json_escapes(self.generate(prompt, system, max_tokens))
+        text = extract_and_repair_json(self.generate(prompt, system, max_tokens))
         return json.loads(text)
 
 
