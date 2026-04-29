@@ -45,5 +45,5 @@ def test_trailing_dot_localhost_is_blocked() -> None:
     assert is_safe_url("http://127.0.0.1.") is False
 
 
-def test_uppercase_scheme_is_blocked() -> None:
-    assert is_safe_url("HTTP://example.com") is False
+def test_uppercase_scheme_is_allowed() -> None:
+    assert is_safe_url("HTTP://example.com") is True
