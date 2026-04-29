@@ -91,11 +91,11 @@ Write a concise updated rolling summary that captures the flowing narrative so f
                 system="You are a summarization assistant.",
                 max_tokens=1000
             )
+            self.accumulator = []
+            self.accumulator_tokens = 0
         except Exception as e:
             logger.warning("Failed on accumulated sections: %s", e)
 
-        self.accumulator = []
-        self.accumulator_tokens = 0
         return rolling_summary
 
     def _traverse_topics(self, topics_dict: dict, current_path: list[str], report_file: Path, scratch_pad: str, rolling_summary: str) -> str:
