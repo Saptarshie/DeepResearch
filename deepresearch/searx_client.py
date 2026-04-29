@@ -25,18 +25,23 @@ class SearxClient:
         data: dict[str, Any] = r.json()
         results: list[SearchResult] = []
         for item in data.get("results", []):
+            engines = item.get("engines")
+            engine_str = ",".join(engines) if isinstance(engines, list) else ""
             results.append(
                 SearchResult(
                     title=item.get("title", ""),
                     url=item.get("url", ""),
                     snippet=item.get("content", "") or "",
-                    engine=",".join(item.get("engines", []))
-                    if isinstance(item.get("engines"), list)
-                    else "",
-                    score=0.0,
+                    engine=engine_str,
                 )
             )
         return results
 
     async def close(self) -> None:
         await self._client.aclose()
+
+    async def __aenter__(self) -> SearxClient:
+        return self
+
+    async def __aexit__(self, *args) -> None:
+        await self.close()
