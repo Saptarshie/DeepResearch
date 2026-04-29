@@ -1,18 +1,21 @@
 from __future__ import annotations
+
 import asyncio
 import hashlib
 import logging
-from typing import Callable, Any
+from collections.abc import Callable
+from typing import Any
+
 from deepresearch.config import Config
-from deepresearch.llm_client import LLMClient
-from deepresearch.searx_client import SearxClient
-from deepresearch.frontier import CrawlFrontier, domain_of
-from deepresearch.fetcher import PageFetcher
-from deepresearch.extractor import extract_document
-from deepresearch.planner import Planner
 from deepresearch.critic import Critic
-from deepresearch.synthesizer import Synthesizer
+from deepresearch.extractor import extract_document
+from deepresearch.fetcher import PageFetcher
+from deepresearch.frontier import CrawlFrontier, domain_of
+from deepresearch.llm_client import LLMClient
+from deepresearch.planner import Planner
 from deepresearch.schemas import FrontierItem
+from deepresearch.searx_client import SearxClient
+from deepresearch.synthesizer import Synthesizer
 from deepresearch.url_validator import is_safe_url
 
 logger = logging.getLogger(__name__)
@@ -85,7 +88,12 @@ async def deep_search(
 
     search_results = await asyncio.gather(*[_search_one(q) for q in plan.queries])
     for i, results in enumerate(search_results):
-        emit("search", {"query": plan.queries[i], "results_count": len(results), "query_index": i + 1, "total_queries": len(plan.queries)})
+        emit("search", {
+            "query": plan.queries[i],
+            "results_count": len(results),
+            "query_index": i + 1,
+            "total_queries": len(plan.queries),
+        })
         for r in results:
             if not r.url:
                 continue
@@ -102,7 +110,11 @@ async def deep_search(
             frontier.push(item)
 
     total_urls = frontier.size()
-    emit("status", {"phase": "fetching", "message": "Fetching documents...", "total_urls": total_urls})
+    emit("status", {
+        "phase": "fetching",
+        "message": "Fetching documents...",
+        "total_urls": total_urls,
+    })
 
     try:
         while not frontier.empty() and len(docs) < cfg.max_docs:
@@ -124,13 +136,13 @@ async def deep_search(
                     logger.info("Skipping duplicate content: %s", item.url)
                     continue
                 seen_content_hashes.add(content_hash)
-                doc = {
+                doc = dict(extracted)
+                doc.update({
                     "url": fetched.url,
                     "final_url": fetched.final_url,
                     "fetch_mode": fetched.fetch_mode,
                     "status_code": fetched.status_code,
-                    **extracted,
-                }
+                })
                 docs.append(doc)
                 emit("document", {
                     "url": item.url,
@@ -140,7 +152,10 @@ async def deep_search(
                     "phase": "extracted"
                 })
                 if len(docs) % cfg.critique_batch_size == 0:
-                    emit("status", {"phase": "critiquing", "message": f"Analyzing gaps ({len(docs)} documents)..."})
+                    emit("status", {
+                        "phase": "critiquing",
+                        "message": f"Analyzing gaps ({len(docs)} documents)...",
+                    })
                     gap_report = critic.find_gaps(query, docs)
                     if gap_report.should_research_more:
                         emit("gaps", {
@@ -157,7 +172,9 @@ async def deep_search(
                                             FrontierItem(
                                                 url=r.url,
                                                 canonical_url=r.url.split("#")[0],
-                                                priority=score_result(r.title, r.url, r.snippet) + 0.5,
+                                                priority=(
+                                                    score_result(r.title, r.url, r.snippet) + 0.5
+                                                ),
                                                 source_query=q,
                                                 domain=domain_of(r.url),
                                             )
@@ -169,10 +186,19 @@ async def deep_search(
                 logger.warning("Fetch failed for %s: %s", item.url, e)
                 emit("warning", {"message": f"Fetch failed for {item.url}: {e}"})
     finally:
-        await fetcher.close()
-        await searx.close()
+        try:
+            await fetcher.close()
+        except Exception:
+            logger.warning("Error closing fetcher", exc_info=True)
+        try:
+            await searx.close()
+        except Exception:
+            logger.warning("Error closing searx client", exc_info=True)
 
-    emit("status", {"phase": "synthesizing", "message": f"Synthesizing report from {len(docs)} documents..."})
+    emit("status", {
+        "phase": "synthesizing",
+        "message": f"Synthesizing report from {len(docs)} documents...",
+    })
     result = synthesizer.synthesize(query, docs)
     emit("complete", {"docs_count": len(docs), "report_length": len(result)})
     return result

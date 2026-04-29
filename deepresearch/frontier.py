@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from queue import PriorityQueue
 from urllib.parse import urlparse
+
 from deepresearch.schemas import FrontierItem
 
 
@@ -32,7 +34,7 @@ class CrawlFrontier:
 
     def empty(self) -> bool:
         return self.q.empty()
-    
+
     def size(self) -> int:
         """Return the number of items in the queue."""
         return self.q.qsize()
