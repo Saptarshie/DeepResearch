@@ -28,5 +28,8 @@ async def test_fetch_http_success(fetcher) -> None:
 
 
 async def test_fetcher_close_releases_resources(fetcher) -> None:
+    # Trigger client creation
+    _ = await fetcher._get_http_client()
+    assert fetcher._http_client is not None
     await fetcher.close()
     assert fetcher._http_client is None
