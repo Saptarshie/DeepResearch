@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from deepresearch.config import Config
 from deepresearch.llm_client import LLMClient
 from deepresearch.synthesizer.indexer import Indexer

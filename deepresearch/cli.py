@@ -2,10 +2,12 @@
 """CLI for DeepSearch Research System."""
 
 from __future__ import annotations
+
 import argparse
 import asyncio
 import logging
 import sys
+
 from deepresearch import deep_search
 
 
