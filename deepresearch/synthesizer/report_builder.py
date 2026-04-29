@@ -78,6 +78,13 @@ Follow these guidelines:
             with open(report_file, "a", encoding="utf-8") as f:
                 f.write("\n\n" + section_content)
 
+            self.accumulator = []
+            self.accumulator_tokens = 0
+        except Exception as e:
+            logger.warning("Failed on accumulated sections: %s", e)
+            return rolling_summary
+
+        try:
             summary_prompt = f"""Update the rolling summary with the new section.
 Current Summary:
 {rolling_summary}
@@ -91,10 +98,8 @@ Write a concise updated rolling summary that captures the flowing narrative so f
                 system="You are a summarization assistant.",
                 max_tokens=1000
             )
-            self.accumulator = []
-            self.accumulator_tokens = 0
         except Exception as e:
-            logger.warning("Failed on accumulated sections: %s", e)
+            logger.warning("Failed to update rolling summary: %s", e)
 
         return rolling_summary
 
