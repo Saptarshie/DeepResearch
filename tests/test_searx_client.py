@@ -31,9 +31,12 @@ async def test_search_returns_results(searx_client) -> None:
     assert len(results) == 1
     assert results[0].title == "Test Title"
     assert results[0].url == "http://example.com"
+    assert results[0].snippet == "Test snippet"
+    assert results[0].engine == "google"
     assert route.called
 
 
 async def test_close_client() -> None:
     client = SearxClient("http://localhost:8080")
     await client.close()
+    assert client._client.is_closed
