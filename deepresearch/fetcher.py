@@ -95,6 +95,8 @@ class PageFetcher:
                     if self.enable_browser:
                         return await self.fetch_browser(url)
                 return res
+            except asyncio.CancelledError:
+                raise
             except Exception as e:
                 last_error = e
                 if attempt < self.max_retries:
@@ -106,7 +108,7 @@ class PageFetcher:
                     except Exception:
                         pass
                 raise
-        raise last_error or Exception("Fetch failed after retries")
+        raise last_error
 
     async def close(self) -> None:
         if self._http_client is not None:

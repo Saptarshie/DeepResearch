@@ -44,9 +44,16 @@ async def test_fetch_browser_fallback(fetcher) -> None:
 
 
 async def test_fetcher_close_with_browser(fetcher) -> None:
+    # Mock browser and playwright
+    mock_browser = AsyncMock()
+    mock_playwright = AsyncMock()
+    fetcher._browser = mock_browser
+    fetcher._playwright = mock_playwright
     # Trigger http client creation
     _ = await fetcher._get_http_client()
     await fetcher.close()
     assert fetcher._http_client is None
     assert fetcher._browser is None
     assert fetcher._playwright is None
+    mock_browser.close.assert_awaited_once()
+    mock_playwright.stop.assert_awaited_once()
