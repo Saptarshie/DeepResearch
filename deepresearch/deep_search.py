@@ -44,9 +44,13 @@ async def deep_search(
     progress_callback: Callable[[str, dict[str, Any]], None] | None = None
 ) -> str:
     if config is None:
-        cfg = Config()
+        cfg = Config.from_env()
     elif isinstance(config, dict):
-        cfg = Config(**config)
+        cfg = Config.from_env()
+        for key, value in config.items():
+            if not hasattr(cfg, key):
+                raise TypeError(f"Config has no field {key!r}")
+            setattr(cfg, key, value)
     else:
         cfg = config
 
