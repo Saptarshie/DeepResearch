@@ -118,3 +118,39 @@ def test_llm_client_allows_explicit_provider_override() -> None:
         llm = LLMClient(config)
         result = llm.generate("hello", provider="openai")
         assert result == "ok"
+
+
+def test_anthropic_client_json_parses_response() -> None:
+    with patch("deepresearch.llm_client.anthropic.Anthropic") as MockAnthropic:
+        mock_client = MagicMock()
+        mock_stream = [
+            MagicMock(type="content_block_delta", delta=MagicMock(text='{"key": "value"}')),
+        ]
+        mock_client.messages.create.return_value = iter(mock_stream)
+        MockAnthropic.return_value = mock_client
+
+        client = AnthropicClient(api_key="test-key", model="claude-test")
+        result = client.json("prompt", "system", max_tokens=100)
+        assert result == {"key": "value"}
+
+
+def test_llm_client_json_delegates_to_provider() -> None:
+    with patch("deepresearch.llm_client.anthropic.Anthropic") as MockAnthropic:
+        mock_client = MagicMock()
+        mock_stream = [
+            MagicMock(type="content_block_delta", delta=MagicMock(text='{"result": 42}')),
+        ]
+        mock_client.messages.create.return_value = iter(mock_stream)
+        MockAnthropic.return_value = mock_client
+
+        config = MagicMock()
+        config.anthropic_api_key = "ak"
+        config.anthropic_model = "claude-test"
+        config.anthropic_base_url = None
+        config.openai_api_key = ""
+        config.default_provider = "anthropic"
+        config.max_tokens = 1000
+
+        llm = LLMClient(config)
+        result = llm.json("prompt")
+        assert result == {"result": 42}

@@ -71,8 +71,7 @@ class _RetryMixin:
                 if attempt < max_retries:
                     time.sleep(2 ** (attempt - 1))
                     continue
-                raise
-        raise last_error or Exception("Generate failed after retries")
+                raise last_error
 
 
 class AnthropicClient(_RetryMixin):
