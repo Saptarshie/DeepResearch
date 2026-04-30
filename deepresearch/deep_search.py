@@ -111,7 +111,7 @@ async def deep_search(
                 source_query=plan.queries[i],
                 domain=domain_of(r.url),
             )
-            frontier.push(item)
+            await frontier.push(item)
 
     total_urls = frontier.size()
     emit("status", {
@@ -122,7 +122,7 @@ async def deep_search(
 
     try:
         while not frontier.empty() and len(docs) < cfg.max_docs:
-            item = frontier.pop()
+            item = await frontier.pop()
             if not item:
                 break
             try:
@@ -177,7 +177,7 @@ async def deep_search(
                                 extra = await searx.search(q)
                                 for r in extra:
                                     if r.url and is_safe_url(r.url):
-                                        frontier.push(
+                                        await frontier.push(
                                             FrontierItem(
                                                 url=r.url,
                                                 canonical_url=r.url.split("#")[0],

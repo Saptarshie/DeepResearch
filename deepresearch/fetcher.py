@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any
 
 import httpx
+from httpx import Limits
 
 
 @dataclass
@@ -33,6 +34,8 @@ class PageFetcher:
         self._http_client: httpx.AsyncClient | None = None
         self._playwright: Any | None = None
         self._browser: Any | None = None
+        self._page: Any | None = None
+        self._limits = Limits(max_connections=100, max_keepalive_connections=20)
 
     async def _get_http_client(self) -> httpx.AsyncClient:
         if self._http_client is None:
@@ -40,6 +43,7 @@ class PageFetcher:
                 follow_redirects=True,
                 timeout=self.timeout,
                 headers={"User-Agent": "Mozilla/5.0 (compatible; DeepResearchBot/1.0)"},
+                limits=self._limits,
             )
         return self._http_client
 
@@ -65,9 +69,10 @@ class PageFetcher:
 
     async def fetch_browser(self, url: str) -> FetchResult:
         browser = await self._get_browser()
-        page = None
+        if self._page is None or getattr(self._page, "is_closed", lambda: True)():
+            self._page = await browser.new_page()
+        page = self._page
         try:
-            page = await browser.new_page()
             response = await page.goto(
                 url, wait_until="networkidle", timeout=int(self.timeout * 1000)
             )
@@ -75,9 +80,9 @@ class PageFetcher:
             html = await page.content()
             final_url = page.url
             status_code = response.status if response else 0
-        finally:
-            if page is not None:
-                await page.close()
+        except Exception:
+            self._page = None
+            raise
         return FetchResult(
             url=url,
             final_url=final_url,
@@ -111,6 +116,10 @@ class PageFetcher:
         raise RuntimeError("Unexpected end of fetch loop")
 
     async def close(self) -> None:
+        if self._page is not None:
+            with contextlib.suppress(Exception):
+                await self._page.close()
+            self._page = None
         if self._http_client is not None:
             with contextlib.suppress(Exception):
                 await self._http_client.aclose()

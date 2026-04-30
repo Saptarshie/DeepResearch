@@ -11,7 +11,8 @@ class SearxClient:
     def __init__(self, base_url: str, timeout: int = 30):
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
-        self._client = httpx.AsyncClient(timeout=timeout)
+        limits = httpx.Limits(max_connections=100, max_keepalive_connections=20)
+        self._client = httpx.AsyncClient(timeout=timeout, limits=limits)
 
     async def search(
         self, query: str, language: str = "en", categories: str = "general"
