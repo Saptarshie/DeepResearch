@@ -28,6 +28,8 @@ class Config:
         "WORKSPACE_DIR": ("workspace_dir", str),
         "MAX_DEPTH": ("max_depth", int),
         "MIN_CONTENT_LENGTH": ("min_content_length", int),
+        "FETCH_CONCURRENCY": ("fetch_concurrency", int),
+        "SEARCH_CONCURRENCY": ("search_concurrency", int),
         "LOG_LEVEL": ("log_level", str),
         "ENABLE_BROWSER": ("enable_browser", lambda v: v.strip().lower() in ("true", "1", "yes")),
     }
@@ -52,6 +54,8 @@ class Config:
     workspace_dir: str = "workspace"
     max_depth: int = 2
     min_content_length: int = 500
+    fetch_concurrency: int = 10
+    search_concurrency: int = 5
     log_level: str = "INFO"
     enable_browser: bool = True
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import hashlib
 import logging
 from collections.abc import Callable
@@ -34,8 +35,8 @@ def score_result(title: str, url: str, snippet: str) -> float:
     return score
 
 
-def _normalize_text(text: str) -> str:
-    return " ".join(text.lower().split())
+def _content_hash(text: str) -> str:
+    return hashlib.md5(text[:5000].encode()).hexdigest()
 
 
 async def deep_search(
@@ -73,7 +74,8 @@ async def deep_search(
     synthesizer = Synthesizer(llm, cfg)
 
     emit("status", {"phase": "planning", "message": "Creating research plan..."})
-    plan = planner.make_plan(query)
+    loop = asyncio.get_running_loop()
+    plan = await loop.run_in_executor(None, planner.make_plan, query)
     emit("plan", {"queries": plan.queries, "subquestions": plan.subquestions})
 
     frontier = CrawlFrontier(max_depth=cfg.max_depth)
@@ -82,13 +84,16 @@ async def deep_search(
 
     emit("status", {"phase": "searching", "message": "Searching for relevant sources..."})
 
+    search_sem = asyncio.Semaphore(cfg.search_concurrency)
+
     async def _search_one(q: str) -> list:
-        try:
-            return await searx.search(q)
-        except Exception as e:
-            logger.warning("Search failed for '%s': %s", q, e)
-            emit("warning", {"message": f"Search failed for '{q}': {e}"})
-            return []
+        async with search_sem:
+            try:
+                return await searx.search(q)
+            except Exception as e:
+                logger.warning("Search failed for '%s': %s", q, e)
+                emit("warning", {"message": f"Search failed for '{q}': {e}"})
+                return []
 
     search_results = await asyncio.gather(*[_search_one(q) for q in plan.queries])
     for i, results in enumerate(search_results):
@@ -120,11 +125,10 @@ async def deep_search(
         "total_urls": total_urls,
     })
 
-    try:
-        while not frontier.empty() and len(docs) < cfg.max_docs:
-            item = await frontier.pop()
-            if not item:
-                break
+    fetch_sem = asyncio.Semaphore(cfg.fetch_concurrency)
+
+    async def _fetch_and_process(item: FrontierItem) -> dict | None:
+        async with fetch_sem:
             try:
                 emit("document", {
                     "url": item.url,
@@ -134,11 +138,10 @@ async def deep_search(
                 })
                 fetched = await fetcher.fetch(item.url)
                 extracted = extract_document(fetched.html, fetched.final_url)
-                normalized = _normalize_text(extracted.text)
-                content_hash = hashlib.md5(normalized.encode()).hexdigest()
+                content_hash = _content_hash(extracted.text)
                 if content_hash in seen_content_hashes:
                     logger.info("Skipping duplicate content: %s", item.url)
-                    continue
+                    return None
                 seen_content_hashes.add(content_hash)
                 doc = {
                     "url": fetched.url,
@@ -152,10 +155,34 @@ async def deep_search(
                     "language": extracted.language,
                     "metadata": extracted.metadata,
                 }
+                return doc
+            except Exception as e:
+                logger.warning("Fetch failed for %s: %s", item.url, e)
+                emit("warning", {"message": f"Fetch failed for {item.url}: {e}"})
+                return None
+
+    pending: set[asyncio.Task] = set()
+    try:
+        while len(docs) < cfg.max_docs:
+            while len(pending) < cfg.fetch_concurrency:
+                item = await frontier.pop()
+                if item is None:
+                    break
+                task = asyncio.create_task(_fetch_and_process(item))
+                pending.add(task)
+            if not pending:
+                break
+            done, pending = await asyncio.wait(
+                pending, return_when=asyncio.FIRST_COMPLETED
+            )
+            for task in done:
+                doc = task.result()
+                if doc is None:
+                    continue
                 docs.append(doc)
                 emit("document", {
-                    "url": item.url,
-                    "title": extracted.title,
+                    "url": doc["url"],
+                    "title": doc["title"],
                     "docs_fetched": len(docs),
                     "max_docs": cfg.max_docs,
                     "phase": "extracted"
@@ -165,7 +192,9 @@ async def deep_search(
                         "phase": "critiquing",
                         "message": f"Analyzing gaps ({len(docs)} documents)...",
                     })
-                    gap_report = critic.find_gaps(query, docs)
+                    gap_report = await loop.run_in_executor(
+                        None, critic.find_gaps, query, docs
+                    )
                     if gap_report.should_research_more:
                         emit("gaps", {
                             "covered": gap_report.covered_subtopics,
@@ -174,7 +203,7 @@ async def deep_search(
                         })
                         for q in gap_report.followup_queries:
                             try:
-                                extra = await searx.search(q)
+                                extra = await _search_one(q)
                                 for r in extra:
                                     if r.url and is_safe_url(r.url):
                                         await frontier.push(
@@ -191,10 +220,11 @@ async def deep_search(
                             except Exception as e:
                                 logger.warning("Re-search failed for '%s': %s", q, e)
                                 emit("warning", {"message": f"Re-search failed for '{q}': {e}"})
-            except Exception as e:
-                logger.warning("Fetch failed for %s: %s", item.url, e)
-                emit("warning", {"message": f"Fetch failed for {item.url}: {e}"})
     finally:
+        for task in pending:
+            task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await asyncio.gather(*pending, return_exceptions=True)
         try:
             await fetcher.close()
         except Exception:
@@ -208,6 +238,6 @@ async def deep_search(
         "phase": "synthesizing",
         "message": f"Synthesizing report from {len(docs)} documents...",
     })
-    result = synthesizer.synthesize(query, docs)
+    result = await loop.run_in_executor(None, synthesizer.synthesize, query, docs)
     emit("complete", {"docs_count": len(docs), "report_length": len(result)})
     return result
