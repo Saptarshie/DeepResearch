@@ -79,8 +79,8 @@ URL: {url}
                 response = self.llm.json(
                     prompt,
                     system=system_prompt,
-                    use_claude=True,
-                    max_tokens=8000
+                    provider="anthropic",
+                    max_tokens=8000,
                 )
 
                 if "updated_topics_hierarchy" in response:

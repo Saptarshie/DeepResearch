@@ -71,8 +71,8 @@ Follow these guidelines:
             section_content = self.llm.generate(
                 prompt,
                 system=system_prompt,
-                use_claude=True,
-                max_tokens=self.config.max_tokens
+                provider="anthropic",
+                max_tokens=self.config.max_tokens,
             )
 
             with open(report_file, "a", encoding="utf-8") as f:
