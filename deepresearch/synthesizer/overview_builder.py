@@ -11,7 +11,7 @@ class OverviewBuilder:
         self.llm = llm
         self.config = config
 
-    def build_overview(self, root_path: Path | str) -> str:
+    def build_overview(self, root_path: Path | str, is_root: bool = True) -> str:
         root_path = Path(root_path)
         if not root_path.exists() or not root_path.is_dir():
             return ""
@@ -32,7 +32,7 @@ class OverviewBuilder:
         # Recursive step
         context = ""
         for d in subdirs:
-            child_summary = self.build_overview(d)
+            child_summary = self.build_overview(d, is_root=False)
             if child_summary:
                 context += f"\n\n### Subtopic: {d.name}\n{child_summary}"
 
@@ -42,7 +42,11 @@ class OverviewBuilder:
         if not context.strip():
             return ""
 
-        # Call LLM to synthesize overall context into an overview
+        # Skip LLM for intermediate nodes — deterministic concatenation is sufficient
+        if not is_root:
+            return context
+
+        # Call LLM to synthesize overall context into an overview (only at root)
         logger.info("Synthesizing overview for %s", root_path)
         system_prompt = """You are an advanced synthesis engine.
 Your task is to summarize and integrate the provided contextual information from subtopics and local information into a coherent, comprehensive overview for this directory level.

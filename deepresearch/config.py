@@ -24,6 +24,7 @@ class Config:
         "SYNTHESIZER_MAX_TOKENS": ("synthesizer_max_tokens", int),
         "MAX_INDEXER_DEPTH": ("max_indexer_depth", int),
         "INDEXES_DIR": ("indexes_dir", str),
+        "INDEXER_BATCH_SIZE": ("indexer_batch_size", int),
         "MIN_ACCUMULATOR_THRESHOLD": ("min_accumulator_threshold", int),
         "WORKSPACE_DIR": ("workspace_dir", str),
         "MAX_DEPTH": ("max_depth", int),
@@ -50,6 +51,7 @@ class Config:
     synthesizer_max_tokens: int = 100000
     max_indexer_depth: int = 3
     indexes_dir: str = "INDEXES"
+    indexer_batch_size: int = 5
     min_accumulator_threshold: int = 400
     workspace_dir: str = "workspace"
     max_depth: int = 2

@@ -16,6 +16,34 @@ class Indexer:
         self.indexes_dir = Path(config.indexes_dir)
         self.max_depth = config.max_indexer_depth
 
+    def _build_prompt(self, query: str, docs: list[dict], topics_json: dict, scratch_pad: str) -> str:
+        docs_section = ""
+        for idx, doc in enumerate(docs, 1):
+            title = doc.get("title", "Untitled")
+            text = doc.get("text", "")[:10000]
+            url = doc.get("url", "")
+            docs_section += f"""
+### Document {idx}
+Title: {title}
+URL: {url}
+Content:
+{text}
+
+"""
+
+        return f"""
+## User Query
+{query}
+
+## Documents
+{docs_section}
+## Current Topics Hierarchy
+{json.dumps(topics_json, indent=2)}
+
+## Current Scratch Pad
+{scratch_pad}
+"""
+
     def process_docs(self, docs: list[dict], query: str) -> dict:
         # Ensure fresh run
         if self.indexes_dir.exists():
@@ -24,17 +52,18 @@ class Indexer:
 
         topics_json = {}
         scratch_pad = ""
+        batch_size = getattr(self.config, "indexer_batch_size", 5)
 
         system_prompt = f"""You are an advanced hierarchical information indexer.
 You are given:
 - The user's query
-- A document's content
+- A batch of documents (1-{batch_size} documents)
 - The current topics hierarchy (JSON where keys are topics, values are subtopic dicts)
 - The current scratch pad
 
 Your job is to:
-1. Update the topics hierarchy with any NEW relevant topics from the document. The maximum depth of the hierarchy is {self.max_depth}. Keep keys short and descriptive.
-2. Extract specific information blocks from the document to place in the appropriate topic/subtopic paths. 
+1. Update the topics hierarchy with any NEW relevant topics from the documents. The maximum depth of the hierarchy is {self.max_depth}. Keep keys short and descriptive.
+2. Extract specific information blocks from the documents to place in the appropriate topic/subtopic paths.
    - A path is a list of topic names corresponding to the JSON hierarchy. (e.g. ["Artificial Intelligence", "Neural Networks"])
    - IMPORTANT: Only output the information blocks that belong to the new hierarchy.
 3. Update the global scratch pad with any important insight, global context, or summary.
@@ -51,30 +80,12 @@ Respond strictly in the following JSON format:
   "updated_scratch_pad": "The new content for the scratch pad."
 }}"""
 
-        logger.info("Starting indexing of %s documents...", len(docs))
-        for i, doc in enumerate(docs, 1):
-            title = doc.get("title", "Untitled")
-            text = doc.get("text", "")
-            url = doc.get("url", "")
-            logger.info("Processing doc %s/%s: %s", i, len(docs), title)
+        logger.info("Starting indexing of %s documents (batch size=%s)...", len(docs), batch_size)
+        for batch_start in range(0, len(docs), batch_size):
+            batch = docs[batch_start:batch_start + batch_size]
+            logger.info("Processing batch %s-%s of %s", batch_start + 1, batch_start + len(batch), len(docs))
 
-            prompt = f"""
-## User Query
-{query}
-
-## Document Info
-Title: {title}
-URL: {url}
-
-## Document Content
-{text[:10000]}
-
-## Current Topics Hierarchy
-{json.dumps(topics_json, indent=2)}
-
-## Current Scratch Pad
-{scratch_pad}
-"""
+            prompt = self._build_prompt(query, batch, topics_json, scratch_pad)
             try:
                 response = self.llm.json(
                     prompt,
@@ -106,11 +117,16 @@ URL: {url}
                     target_dir.mkdir(parents=True, exist_ok=True)
 
                     info_file = target_dir / "information.md"
+                    # Include source references for all documents in batch
+                    source_header = "\n".join(
+                        f"### Source: [{d.get('title', 'Untitled')}]({d.get('url', '')})"
+                        for d in batch
+                    )
                     with open(info_file, "a", encoding="utf-8") as f:
-                        f.write(f"\n### Source: [{title}]({url})\n\n{content}\n")
+                        f.write(f"\n{source_header}\n\n{content}\n")
 
             except Exception as e:
-                logger.warning("Error processing document: %s", e)
+                logger.warning("Error processing batch starting at %s: %s", batch_start, e)
 
         # Save final state for debugging & usage
         workspace = Path(self.config.workspace_dir)
