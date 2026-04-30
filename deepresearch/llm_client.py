@@ -104,13 +104,13 @@ class AnthropicClient(_RetryMixin):
                 ],
                 stream=True,
             )
-            response_text = ""
+            chunks: list[str] = []
             for chunk in stream:
                 if chunk.type == "content_block_delta" and hasattr(
                     chunk.delta, "text"
                 ):
-                    response_text += chunk.delta.text
-            return response_text
+                    chunks.append(chunk.delta.text)
+            return "".join(chunks)
 
         return self._generate_with_retry(_call, max_retries)
 
@@ -159,12 +159,12 @@ class OpenAIClient(_RetryMixin):
                 ],
                 stream=True,
             )
-            response_text = ""
+            chunks: list[str] = []
             for chunk in stream:
                 delta = chunk.choices[0].delta
                 if hasattr(delta, "content") and delta.content:
-                    response_text += delta.content
-            return response_text
+                    chunks.append(delta.content)
+            return "".join(chunks)
 
         return self._generate_with_retry(_call, max_retries)
 

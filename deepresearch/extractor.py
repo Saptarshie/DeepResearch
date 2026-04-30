@@ -30,17 +30,13 @@ def _safe_meta_get(meta: dict[str, Any] | None, key: str, default: str = "") -> 
 
 
 def extract_document(html: str, url: str) -> Document:
-    text = (
-        extract(
-            html,
-            url=url,
-            include_comments=False,
-            include_tables=True,
-            favor_precision=True,
-        )
-        or ""
+    meta_raw = bare_extraction(
+        html,
+        url=url,
+        include_comments=False,
+        include_tables=True,
+        favor_precision=True,
     )
-    meta_raw = bare_extraction(html, url=url)
     meta: dict[str, Any] = {}
     if isinstance(meta_raw, dict):
         meta = meta_raw
@@ -52,6 +48,7 @@ def extract_document(html: str, url: str) -> Document:
         except (json.JSONDecodeError, TypeError):
             meta = {}
 
+    text = meta.get("text", "") if isinstance(meta, dict) else ""
     title = _safe_meta_get(meta, "title")
     if not title:
         title = _extract_title_from_html(html)
