@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import asyncio
-
-import pytest
-
 from deepresearch.frontier import CrawlFrontier
 from deepresearch.schemas import FrontierItem
 

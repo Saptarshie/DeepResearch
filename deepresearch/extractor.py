@@ -4,7 +4,7 @@ import json
 from typing import Any
 
 from lxml import html as lh  # type: ignore[import-untyped]
-from trafilatura import bare_extraction, extract
+from trafilatura import bare_extraction
 
 from deepresearch.schemas import Document
 

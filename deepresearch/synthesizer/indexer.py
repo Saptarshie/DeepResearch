@@ -16,7 +16,9 @@ class Indexer:
         self.indexes_dir = Path(config.indexes_dir)
         self.max_depth = config.max_indexer_depth
 
-    def _build_prompt(self, query: str, docs: list[dict], topics_json: dict, scratch_pad: str) -> str:
+    def _build_prompt(
+        self, query: str, docs: list[dict], topics_json: dict, scratch_pad: str
+    ) -> str:
         docs_section = ""
         for idx, doc in enumerate(docs, 1):
             title = doc.get("title", "Untitled")
@@ -54,36 +56,53 @@ Content:
         scratch_pad = ""
         batch_size = getattr(self.config, "indexer_batch_size", 5)
 
-        system_prompt = f"""You are an advanced hierarchical information indexer.
-You are given:
-- The user's query
-- A batch of documents (1-{batch_size} documents)
-- The current topics hierarchy (JSON where keys are topics, values are subtopic dicts)
-- The current scratch pad
+        system_prompt = (
+            f"You are an advanced hierarchical information indexer.\n"
+            f"You are given:\n"
+            f"- The user's query\n"
+            f"- A batch of documents (1-{batch_size} documents)\n"
+            f"- The current topics hierarchy (JSON where keys are topics, "
+            f"values are subtopic dicts)\n"
+            f"- The current scratch pad\n\n"
+            f"Your job is to:\n"
+            f"1. Update the topics hierarchy with any NEW relevant topics "
+            f"from the documents. The maximum depth of the hierarchy is "
+            f"{self.max_depth}. Keep keys short and descriptive.\n"
+            f"2. Extract specific information blocks from the documents to "
+            f"place in the appropriate topic/subtopic paths.\n"
+            f'   - A path is a list of topic names corresponding to the JSON '
+            f'hierarchy. (e.g. ["Artificial Intelligence", "Neural Networks"])\n'
+            f"   - IMPORTANT: Only output the information blocks that belong "
+            f"to the new hierarchy.\n"
+            f"3. Update the global scratch pad with any important insight, "
+            f"global context, or summary.\n\n"
+            f"Respond strictly in the following JSON format:\n"
+            f'{{\n  "updated_topics_hierarchy": '
+            f'{{ "Topic 1": {{"Subtopic 1": {{}}}}, "Topic 2": {{}} }},\n'
+            f'  "extracted_information": [\n'
+            f'     {{\n'
+            f'       "path": ["Topic 1", "Subtopic 1"],\n'
+            f'       "content": "Detailed text from document relevant to this '
+            f'path. Should be long markdown."\n'
+            f'     }}\n'
+            f'  ],\n'
+            f'  "updated_scratch_pad": "The new content for the scratch pad."\n'
+            f"}}"
+        )
 
-Your job is to:
-1. Update the topics hierarchy with any NEW relevant topics from the documents. The maximum depth of the hierarchy is {self.max_depth}. Keep keys short and descriptive.
-2. Extract specific information blocks from the documents to place in the appropriate topic/subtopic paths.
-   - A path is a list of topic names corresponding to the JSON hierarchy. (e.g. ["Artificial Intelligence", "Neural Networks"])
-   - IMPORTANT: Only output the information blocks that belong to the new hierarchy.
-3. Update the global scratch pad with any important insight, global context, or summary.
-
-Respond strictly in the following JSON format:
-{{
-  "updated_topics_hierarchy": {{ "Topic 1": {{"Subtopic 1": {{}}}}, "Topic 2": {{}} }},
-  "extracted_information": [
-     {{
-       "path": ["Topic 1", "Subtopic 1"],
-       "content": "Detailed text from document relevant to this path. Should be long markdown."
-     }}
-  ],
-  "updated_scratch_pad": "The new content for the scratch pad."
-}}"""
-
-        logger.info("Starting indexing of %s documents (batch size=%s)...", len(docs), batch_size)
+        logger.info(
+            "Starting indexing of %s documents (batch size=%s)...",
+            len(docs),
+            batch_size,
+        )
         for batch_start in range(0, len(docs), batch_size):
             batch = docs[batch_start:batch_start + batch_size]
-            logger.info("Processing batch %s-%s of %s", batch_start + 1, batch_start + len(batch), len(docs))
+            logger.info(
+                "Processing batch %s-%s of %s",
+                batch_start + 1,
+                batch_start + len(batch),
+                len(docs),
+            )
 
             prompt = self._build_prompt(query, batch, topics_json, scratch_pad)
             try:
