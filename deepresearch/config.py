@@ -9,10 +9,13 @@ from typing import Any, ClassVar
 class Config:
     _ENV_MAP: ClassVar[dict[str, tuple[str, Any]]] = {
         "SEARXNG_BASE_URL": ("searxng_base_url", str),
-        "MINIMAX_API_KEY": ("minimax_api_key", str),
-        "MINIMAX_MODEL": ("minimax_model", str),
         "ANTHROPIC_BASE_URL": ("anthropic_base_url", str),
         "ANTHROPIC_API_KEY": ("anthropic_api_key", str),
+        "ANTHROPIC_MODEL": ("anthropic_model", str),
+        "OPENAI_API_KEY": ("openai_api_key", str),
+        "OPENAI_MODEL": ("openai_model", str),
+        "OPENAI_BASE_URL": ("openai_base_url", str),
+        "DEFAULT_PROVIDER": ("default_provider", str),
         "MAX_DOCS": ("max_docs", int),
         "CRITIQUE_BATCH_SIZE": ("critique_batch_size", int),
         "FETCH_TIMEOUT": ("fetch_timeout", float),
@@ -30,10 +33,13 @@ class Config:
     }
 
     searxng_base_url: str = "http://localhost:8080"
-    minimax_api_key: str = ""
-    minimax_model: str = "MiniMax-M2.7"
     anthropic_base_url: str = "https://api.minimax.io/anthropic"
     anthropic_api_key: str = ""
+    anthropic_model: str = "claude-sonnet-4-20250514"
+    openai_api_key: str = ""
+    openai_model: str = "gpt-4o"
+    openai_base_url: str = "https://api.openai.com/v1"
+    default_provider: str = "anthropic"
     max_docs: int = 100
     critique_batch_size: int = 10
     fetch_timeout: float = 20.0

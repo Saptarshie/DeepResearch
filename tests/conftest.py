@@ -7,10 +7,13 @@ from deepresearch.config import Config
 def config() -> Config:
     return Config(
         searxng_base_url="http://localhost:8080",
-        minimax_api_key="",
-        minimax_model="test-model",
         anthropic_base_url="https://api.test.io/anthropic",
         anthropic_api_key="",
+        anthropic_model="test-anthropic-model",
+        openai_api_key="",
+        openai_model="test-openai-model",
+        openai_base_url="https://api.test.io/openai",
+        default_provider="anthropic",
         max_docs=10,
         critique_batch_size=5,
         fetch_timeout=5.0,

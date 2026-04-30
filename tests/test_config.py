@@ -13,8 +13,10 @@ def test_config_fixture(config: Config) -> None:
 
 def test_config_from_env_uses_defaults(monkeypatch) -> None:
     env_vars = [
-        "SEARXNG_BASE_URL", "MINIMAX_API_KEY", "MINIMAX_MODEL",
-        "ANTHROPIC_BASE_URL", "ANTHROPIC_API_KEY", "MAX_DOCS",
+        "SEARXNG_BASE_URL",
+        "ANTHROPIC_BASE_URL", "ANTHROPIC_API_KEY", "ANTHROPIC_MODEL",
+        "OPENAI_API_KEY", "OPENAI_MODEL", "OPENAI_BASE_URL", "DEFAULT_PROVIDER",
+        "MAX_DOCS",
         "CRITIQUE_BATCH_SIZE", "FETCH_TIMEOUT", "BROWSER_WAIT_MS",
         "MAX_TOKENS", "SYNTHESIZER_MAX_TOKENS", "MAX_INDEXER_DEPTH",
         "INDEXES_DIR", "MIN_ACCUMULATOR_THRESHOLD", "WORKSPACE_DIR",
@@ -47,3 +49,8 @@ def test_config_from_env_parses_falsy_booleans(monkeypatch) -> None:
         monkeypatch.setenv("ENABLE_BROWSER", value)
         cfg = Config.from_env()
         assert cfg.enable_browser is False, f"failed for {value!r}"
+
+
+def test_config_default_provider_defaults_to_anthropic() -> None:
+    cfg = Config()
+    assert cfg.default_provider == "anthropic"
