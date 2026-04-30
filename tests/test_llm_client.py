@@ -3,7 +3,12 @@ from __future__ import annotations
 import json
 from unittest.mock import MagicMock, patch
 
-from deepresearch.llm_client import AnthropicClient, LLMClient, OpenAIClient, extract_and_repair_json
+from deepresearch.llm_client import (
+    AnthropicClient,
+    LLMClient,
+    OpenAIClient,
+    extract_and_repair_json,
+)
 
 
 def test_extract_and_repair_json_strips_markdown_fence() -> None:
@@ -92,7 +97,7 @@ def test_llm_client_raises_when_provider_unavailable() -> None:
     llm = LLMClient(config)
     try:
         llm.generate("hello")
-        assert False, "Expected RuntimeError"
+        raise AssertionError("Expected RuntimeError")
     except RuntimeError as e:
         assert "anthropic" in str(e).lower()
 
