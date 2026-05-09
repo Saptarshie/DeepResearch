@@ -109,7 +109,6 @@ Content:
                 response = self.llm.json(
                     prompt,
                     system=system_prompt,
-                    provider="anthropic",
                     max_tokens=8000,
                 )
 

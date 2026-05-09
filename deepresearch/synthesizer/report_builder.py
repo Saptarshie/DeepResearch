@@ -71,7 +71,6 @@ Follow these guidelines:
             section_content = self.llm.generate(
                 prompt,
                 system=system_prompt,
-                provider="anthropic",
                 max_tokens=self.config.max_tokens,
             )
 

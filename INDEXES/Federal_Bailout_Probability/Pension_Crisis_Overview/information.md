@@ -1,0 +1,8 @@
+
+### Source: [](https://eta-publications.lbl.gov/sites/default/files/2024-12/lbnl-2024-united-states-data-center-energy-usage-report_1.pdf)
+### Source: [Report: State and local pension plans have $1.48 trillion in debt - Reason Foundation](https://reason.org/policy-study/annual-pension-report/)
+### Source: [Reason's Annual Pension Report updated through 2024](https://reason.org/pension-newsletter/reasons-annual-pension-report/)
+### Source: [](https://state-pension-tracker.data.reason.org/)
+### Source: [Government bailouts of private industry | Politics and Government | Research Starters | EBSCO Research](https://www.ebsco.com/research-starters/politics-and-government/government-bailouts-private-industry)
+
+Public pension systems in the United States hold a total of $1.48 trillion in unfunded liabilities as of FY 2024, with state plans carrying $1.29 trillion of that debt and local governments $187 billion. The median funded ratio stands at 78%, meaning governments have saved only 78 cents for every dollar of promised benefits. Stress tests indicate that a single recession could balloon unfunded liabilities to $2.74 trillion by 2026, pushing the average funding level down to 63%. Even a 20% market downturn could critically underfund many plans. The recent improvement—from $1.62 trillion to $1.48 trillion—was largely due to higher-than-expected investment returns in FY 2024, but systemic vulnerabilities remain. Between 2007 and 2010, during the Great Recession, unfunded liabilities grew by over $1.15 trillion (an 809% increase), underscoring how quickly conditions can deteriorate.

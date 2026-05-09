@@ -59,7 +59,6 @@ Be objective and factual."""
             overview_content = self.llm.generate(
                 prompt,
                 system=system_prompt,
-                provider="anthropic",
                 max_tokens=self.config.max_tokens,
             )
         except Exception as e:

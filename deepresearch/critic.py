@@ -39,7 +39,7 @@ class Critic:
         prompt = (
             f"""Question: {question}\n\n{doc_summary}\n\nReturn JSON gap analysis."""
         )
-        data = self.llm.json(prompt, system=SYSTEM_PROMPT, provider="anthropic")
+        data = self.llm.json(prompt, system=SYSTEM_PROMPT)
         required_keys = {f.name for f in dataclasses.fields(GapReport)}
         missing = required_keys - set(data.keys())
         if missing:

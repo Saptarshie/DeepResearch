@@ -161,6 +161,8 @@ class OpenAIClient(_RetryMixin):
             )
             chunks: list[str] = []
             for chunk in stream:
+                if not chunk.choices:
+                    continue
                 delta = chunk.choices[0].delta
                 if hasattr(delta, "content") and delta.content:
                     chunks.append(delta.content)
