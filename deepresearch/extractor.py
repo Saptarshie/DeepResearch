@@ -63,3 +63,20 @@ def extract_document(html: str, url: str) -> Document:
         language=_safe_meta_get(meta, "language", "unknown"),
         metadata=meta if isinstance(meta, dict) else {},
     )
+
+
+def extract_pdf_document(text: str, url: str) -> Document:
+    lines = text.strip().split("\n")
+    title = ""
+    for line in lines:
+        stripped = line.strip()
+        if stripped:
+            title = stripped[:200]
+            break
+    return Document(
+        url=url,
+        canonical_url=url.split("#")[0],
+        title=title,
+        text=text,
+        fetch_mode="pdf",
+    )

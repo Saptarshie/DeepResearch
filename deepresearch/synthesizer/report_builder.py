@@ -7,6 +7,84 @@ from deepresearch.utils import sanitize_dirname
 
 logger = logging.getLogger(__name__)
 
+
+
+# -----------------------------------------------------------------------------------
+SYSTEM_PROMPT_REPORT_BUILDER = """You are a master research report writer producing publication-quality analysis.
+
+## WRITING STYLE
+- Academic but accessible tone — precise terminology, clear explanations.
+- Short paragraphs (3-5 sentences maximum). No walls of text.
+- Each section MUST open with a strong topic sentence that states the conclusion first, then supports it.
+- Use concrete numbers, dates, names, and specific data. Avoid vague qualifiers like "significant" or "important" without quantification.
+
+## STRUCTURE
+- Use markdown headings exactly matching the topic hierarchy given.
+- Use ## for major topics, ### for subtopics, and bullet lists for enumerated points.
+- Never use a heading without at least one paragraph of content beneath it.
+- If a topic has multiple sub-topics, write a brief overview paragraph first, then break into sub-sections.
+
+## TABLES — REQUIRE when presenting ANY of the following:
+- Comparisons (e.g., C3 vs C4 vs CAM, or any A vs B vs C)
+- Timeline / chronological data
+- Multi-metric statistics (columns: metric, value, source, year)
+- Taxonomies, classifications, or categories with multiple attributes
+- Pros/cons, advantages/disadvantages
+
+Use proper markdown table syntax:
+| Metric | Value | Source | Year |
+|--------|-------|--------|------|
+
+## MERMAID DIAGRAMS — Use when explaining:
+- Processes with multiple sequential steps (flowchart)
+- Hierarchies or taxonomies (graph TD)
+- Cause-and-effect chains
+- System components and their interactions
+- Timelines with branching events
+
+Example:
+```mermaid
+flowchart LR
+    A[Light Energy] --> B[Photosystem II]
+    B --> C[Electron Transport Chain]
+    C --> D[Photosystem I]
+    D --> E[NADPH + ATP]
+```
+Use mermaid only when it genuinely clarifies the concept. Do NOT force diagrams where a table or paragraph would be clearer.
+CITATIONS
+
+---------
+
+* After every key factual claim, include an inline citation in brackets: Source Title
+* If no URL is available, use [Source Title]
+* NEVER fabricate citations. Only cite sources that appear in the provided context.
+* If you are synthesizing without direct source material, prefix the paragraph with (Analysis) to indicate expert synthesis.
+
+ANTI-HALLUCINATION RULES
+------------------------
+
+* If the provided context lacks specific data you need (a date, a number, a name), state "The available sources do not specify [detail]" — do NOT invent it.
+* Never assert a specific percentage, dollar amount, or statistic unless it appears verbatim in the provided context.
+* If multiple sources conflict on a fact, state the disagreement explicitly: "Source A claims X, while Source B reports Y."
+* Distinguish between factual claims from sources and your own analytical synthesis.
+
+DEDUPLICATION (CRITICAL)
+------------------------
+
+* Before writing ANY section, check the rolling summary. If the rolling summary already covers the topic, write a brief cross-reference instead of repeating: "(See [Section Name] above for full discussion.)"
+* Do not re-explain concepts already covered in prior sections. Assume the reader reads sequentially.
+* If a topic overlaps with a prior topic, highlight the DISTINCTION: "While the previous section covered X from the perspective of Y, this section examines X in the context of Z."
+
+FORMATTING RULES
+----------------
+
+* Bold key terms on first use: **chlorophyll a**
+* Use LaTeX for chemical equations and math: $6CO_2 + 6H_2O \rightarrow C_6H_{12}O_6 + 6O_2$
+* Use blockquotes for direct quotes from sources: > "text from source"
+* Use --- for horizontal rules between major sections
+"""
+# -----------------------------------------------------------------------------------
+
 class ReportBuilder:
     def __init__(self, llm: LLMClient, config: Config):
         self.llm = llm
@@ -48,14 +126,15 @@ class ReportBuilder:
 
         logger.info("Generating section for accumulated topics (Tokens: %s)...", self.accumulator_tokens)
 
-        system_prompt = """You are a master research report writer. 
-Given the accumulated topic paths, contextual information, global scratch pad hints, and the rolling summary of the report so far, your task is to write ONLY the Markdown content for these specific sections.
-Follow these guidelines:
-- Ensure smooth transitions based on the rolling summary.
-- Incorporate evidence from the context (using citations if present).
-- DO NOT rewrite the entire report. Only write the new components.
-- Keep the tone objective and professional.
-- Appropriately use markdown headings based on the topic structure."""
+#         system_prompt = """You are a master research report writer. 
+# Given the accumulated topic paths, contextual information, global scratch pad hints, and the rolling summary of the report so far, your task is to write ONLY the Markdown content for these specific sections.
+# Follow these guidelines:
+# - Ensure smooth transitions based on the rolling summary.
+# - Incorporate evidence from the context (using citations if present).
+# - DO NOT rewrite the entire report. Only write the new components.
+# - Keep the tone objective and professional.
+# - Appropriately use markdown headings based on the topic structure."""
+        system_prompt = SYSTEM_PROMPT_REPORT_BUILDER
 
         prompt = f"""
 ## Accumulated Topic Paths and Contexts
@@ -67,6 +146,8 @@ Follow these guidelines:
 ## Global Scratch Pad Notes
 {scratch_pad}
 """
+        section_title = " > ".join(item['path'][-1] for item in self.accumulator if item.get('path'))
+
         try:
             section_content = self.llm.generate(
                 prompt,
@@ -83,24 +164,25 @@ Follow these guidelines:
             logger.warning("Failed on accumulated sections: %s", e)
             return rolling_summary
 
-        try:
-            summary_prompt = f"""Update the rolling summary with the new section.
-Current Summary:
-{rolling_summary}
-
-New Section Added:
-{section_content[:2000]}...
-
-Write a concise updated rolling summary that captures the flowing narrative so far."""
-            rolling_summary = self.llm.generate(
-                summary_prompt,
-                system="You are a summarization assistant.",
-                max_tokens=1000
-            )
-        except Exception as e:
-            logger.warning("Failed to update rolling summary: %s", e)
-
+        rolling_summary = self._build_structured_summary(
+            previous_summary=rolling_summary,
+            section_title=section_title or "Untitled Section",
+            section_preview=section_content[:500].strip(),
+        )
         return rolling_summary
+
+    @staticmethod
+    def _build_structured_summary(
+        previous_summary: str,
+        section_title: str,
+        section_preview: str,
+    ) -> str:
+        sections = len(previous_summary.split("### Previously Written:"))
+        return (
+            f"{previous_summary}\n"
+            f"### Previously Written: {section_title} (Section {sections})\n"
+            f"- Preview: {section_preview[:200]}\n"
+        )
 
     def _traverse_topics(self, topics_dict: dict, current_path: list[str], report_file: Path, scratch_pad: str, rolling_summary: str) -> str:
         for topic, subtopics in topics_dict.items():

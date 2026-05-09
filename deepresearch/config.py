@@ -29,6 +29,9 @@ class Config:
         "INDEXES_DIR": ("indexes_dir", str),
         "INDEXER_BATCH_SIZE": ("indexer_batch_size", int),
         "MIN_ACCUMULATOR_THRESHOLD": ("min_accumulator_threshold", int),
+        "ENABLE_MERMAID_DIAGRAMS": ("enable_mermaid_diagrams", lambda v: v.strip().lower() in ("true", "1", "yes")),
+        "ENABLE_MARKDOWN_TABLES": ("enable_markdown_tables", lambda v: v.strip().lower() in ("true", "1", "yes")),
+        "REPORT_CITATION_STYLE": ("report_citation_style", str),
         "WORKSPACE_DIR": ("workspace_dir", str),
         "MAX_DEPTH": ("max_depth", int),
         "MIN_CONTENT_LENGTH": ("min_content_length", int),
@@ -36,6 +39,7 @@ class Config:
         "SEARCH_CONCURRENCY": ("search_concurrency", int),
         "LOG_LEVEL": ("log_level", str),
         "ENABLE_BROWSER": ("enable_browser", lambda v: v.strip().lower() in ("true", "1", "yes")),
+        "ENABLE_PDF_EXTRACTION": ("enable_pdf_extraction", lambda v: v.strip().lower() in ("true", "1", "yes")),
     }
 
     searxng_base_url: str = "http://localhost:8080"
@@ -55,7 +59,7 @@ class Config:
     max_indexer_depth: int = 3
     indexes_dir: str = "INDEXES"
     indexer_batch_size: int = 5
-    min_accumulator_threshold: int = 400
+    min_accumulator_threshold: int = 16000
     workspace_dir: str = "workspace"
     max_depth: int = 2
     min_content_length: int = 500
@@ -63,6 +67,10 @@ class Config:
     search_concurrency: int = 5
     log_level: str = "INFO"
     enable_browser: bool = True
+    enable_pdf_extraction: bool = True
+    enable_mermaid_diagrams: bool = True
+    enable_markdown_tables: bool = True
+    report_citation_style: str = "inline"
 
     @classmethod
     def from_env(cls) -> Config:

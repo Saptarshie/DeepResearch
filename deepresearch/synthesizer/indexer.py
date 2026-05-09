@@ -57,36 +57,41 @@ Content:
         batch_size = getattr(self.config, "indexer_batch_size", 5)
 
         system_prompt = (
-            f"You are an advanced hierarchical information indexer.\n"
-            f"You are given:\n"
-            f"- The user's query\n"
-            f"- A batch of documents (1-{batch_size} documents)\n"
-            f"- The current topics hierarchy (JSON where keys are topics, "
-            f"values are subtopic dicts)\n"
-            f"- The current scratch pad\n\n"
-            f"Your job is to:\n"
-            f"1. Update the topics hierarchy with any NEW relevant topics "
-            f"from the documents. The maximum depth of the hierarchy is "
-            f"{self.max_depth}. Keep keys short and descriptive.\n"
-            f"2. Extract specific information blocks from the documents to "
-            f"place in the appropriate topic/subtopic paths.\n"
-            f'   - A path is a list of topic names corresponding to the JSON '
-            f'hierarchy. (e.g. ["Artificial Intelligence", "Neural Networks"])\n'
-            f"   - IMPORTANT: Only output the information blocks that belong "
-            f"to the new hierarchy.\n"
-            f"3. Update the global scratch pad with any important insight, "
-            f"global context, or summary.\n\n"
-            f"Respond strictly in the following JSON format:\n"
+            f"You are an advanced hierarchical information indexer processing a batch of {batch_size} documents.\n\n"
+            f"## YOUR TASKS\n\n"
+            f"### 1. TOPIC DEDUPLICATION (DO THIS FIRST)\n"
+            f"Before adding any NEW topic, scan the existing topics hierarchy.\n"
+            f"If document content logically belongs under an existing topic, place it there as a subtopic.\n"
+            f"Do NOT create parallel top-level topics for the same domain.\n"
+            f"Example: 'Chlorophyll B absorption' -> nest under existing 'Light Reactions' > 'Pigments', NOT as new top-level 'Chlorophyll B'.\n"
+            f"Maximum hierarchy depth is {self.max_depth}.\n\n"
+            f"### 2. EXTRACT INFORMATION BLOCKS\n"
+            f"- A path is a list of topic names matching the JSON hierarchy, e.g. ['Topic 1', 'Subtopic 1'].\n"
+            f"- Each block must include source attribution at the top: '### Source: [Title](URL)'.\n"
+            f"- Preserve full substantive content. Do NOT truncate or summarize at this stage. Use long markdown.\n\n"
+            f"### 3. UPDATE SCRATCH PAD (STRUCTURED FORMAT)\n"
+            f"The scratch pad must follow this exact structure:\n"
+            f"## Coverage Status\n"
+            f"- [Topic Path]: status (covered/partial/gap)\n"
+            f"## Key Statistics Found\n"
+            f"- [Fact]: value from [Source Title]\n"
+            f"## Cross-References Identified\n"
+            f"- [Topic A] relates to [Topic B] because: explanation\n"
+            f"## Quality Notes\n"
+            f"- [Source Title]: RELIABLE — reason / CAUTION — reason\n"
+            f"## Remaining Gaps\n"
+            f"- [Topic]: not yet covered\n\n"
+            f"## RESPONSE FORMAT\n"
+            f"Return strictly valid JSON (no markdown, no code fences):\n"
             f'{{\n  "updated_topics_hierarchy": '
             f'{{ "Topic 1": {{"Subtopic 1": {{}}}}, "Topic 2": {{}} }},\n'
             f'  "extracted_information": [\n'
             f'     {{\n'
             f'       "path": ["Topic 1", "Subtopic 1"],\n'
-            f'       "content": "Detailed text from document relevant to this '
-            f'path. Should be long markdown."\n'
+            f'       "content": "### Source: [Title](URL)\\n\\nDetailed text from document..."\n'
             f'     }}\n'
             f'  ],\n'
-            f'  "updated_scratch_pad": "The new content for the scratch pad."\n'
+            f'  "updated_scratch_pad": "Structured scratch pad content."\n'
             f"}}"
         )
 

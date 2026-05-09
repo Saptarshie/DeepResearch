@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
 from httpx import Limits
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -58,13 +61,23 @@ class PageFetcher:
         client = await self._get_http_client()
         r = await client.get(url)
         r.raise_for_status()
+        content_type = r.headers.get("content-type", "")
+        if "application/pdf" in content_type.lower():
+            return FetchResult(
+                url=url,
+                final_url=str(r.url),
+                status_code=r.status_code,
+                html="",
+                fetch_mode="http",
+                content_type=content_type,
+            )
         return FetchResult(
             url=url,
             final_url=str(r.url),
             status_code=r.status_code,
             html=r.text,
             fetch_mode="http",
-            content_type=r.headers.get("content-type", ""),
+            content_type=content_type,
         )
 
     async def fetch_browser(self, url: str) -> FetchResult:
@@ -92,12 +105,41 @@ class PageFetcher:
             content_type="text/html",
         )
 
+    async def fetch_pdf(self, url: str, max_pages: int = 50) -> FetchResult:
+        import fitz
+        client = await self._get_http_client()
+        r = await client.get(url)
+        r.raise_for_status()
+        content_type = r.headers.get("content-type", "")
+        try:
+            with fitz.open(stream=r.content, filetype="pdf") as doc:
+                text_parts = []
+                for i, page in enumerate(doc):
+                    if i >= max_pages:
+                        break
+                    page_text = page.get_text()
+                    if page_text.strip():
+                        text_parts.append(page_text)
+                text = "\n\n".join(text_parts)
+        except Exception as e:
+            logger.warning("PDF extraction failed for %s: %s", url, e)
+            return FetchResult(
+                url=url, final_url=str(r.url), status_code=r.status_code,
+                html="", fetch_mode="pdf", content_type=content_type,
+            )
+        return FetchResult(
+            url=url, final_url=str(r.url), status_code=r.status_code,
+            html=text, fetch_mode="pdf", content_type=content_type,
+        )
+
     async def fetch(self, url: str, force_browser: bool = False) -> FetchResult:
         for attempt in range(1, self.max_retries + 1):
             try:
                 if force_browser and self.enable_browser:
                     return await self.fetch_browser(url)
                 res = await self.fetch_http(url)
+                if "application/pdf" in res.content_type.lower() or url.lower().endswith(".pdf"):
+                    return await self.fetch_pdf(url)
                 if len(res.html.strip()) < 500 and self.enable_browser:
                     return await self.fetch_browser(url)
                 return res

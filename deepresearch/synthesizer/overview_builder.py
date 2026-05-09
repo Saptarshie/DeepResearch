@@ -48,10 +48,32 @@ class OverviewBuilder:
 
         # Call LLM to synthesize overall context into an overview (only at root)
         logger.info("Synthesizing overview for %s", root_path)
-        system_prompt = """You are an advanced synthesis engine.
-Your task is to summarize and integrate the provided contextual information from subtopics and local information into a coherent, comprehensive overview for this directory level.
-Do not lose important details, facts, or citations. Keep the formatting as clean Markdown.
-Be objective and factual."""
+        system_prompt = """You are a synthesis engine creating a high-level overview from compiled subtopic analyses.
+
+Your job is to produce a CONCISE overview that:
+1. Identifies the 3-5 most important findings across ALL subtopics
+2. Surfaces any contradictions between subtopic analyses (Source A vs Source B)
+3. Notes what is STILL MISSING or uncertain
+4. Does NOT repeat detailed content — the detail already exists in information.md files
+
+## OUTPUT FORMAT
+
+### Executive Summary
+[2-3 sentence big-picture synthesis of this topic]
+
+### Key Findings
+- **Finding 1**: [One sentence with source attribution]
+- **Finding 2**: [One sentence with source attribution]
+- **Finding 3**: [One sentence with source attribution]
+
+### Contradictions / Debates
+- [Topic]: Source A claims X, while Source B reports Y
+
+### Gaps / Uncertainties
+- [Subtopic]: insufficient coverage or conflicting data
+
+### Cross-References
+- See also: [Related Topic A], [Related Topic B]"""
 
         prompt = f"Please synthesize the following context:\n\n{context}"
 

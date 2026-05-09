@@ -9,7 +9,7 @@ from typing import Any
 
 from deepresearch.config import Config
 from deepresearch.critic import Critic
-from deepresearch.extractor import extract_document
+from deepresearch.extractor import extract_document, extract_pdf_document
 from deepresearch.fetcher import PageFetcher
 from deepresearch.frontier import CrawlFrontier, domain_of
 from deepresearch.llm_client import LLMClient
@@ -137,7 +137,13 @@ async def deep_search(
                     "phase": "fetching"
                 })
                 fetched = await fetcher.fetch(item.url)
-                extracted = extract_document(fetched.html, fetched.final_url)
+                if fetched.fetch_mode == "pdf":
+                    extracted = extract_pdf_document(fetched.html, fetched.final_url)
+                else:
+                    extracted = extract_document(fetched.html, fetched.final_url)
+                if len(extracted.text) < cfg.min_content_length:
+                    logger.info("Skipping low-content document: %s (%d chars)", item.url, len(extracted.text))
+                    return None
                 content_hash = _content_hash(extracted.text)
                 if content_hash in seen_content_hashes:
                     logger.info("Skipping duplicate content: %s", item.url)

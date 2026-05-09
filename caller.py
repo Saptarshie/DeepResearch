@@ -45,6 +45,7 @@ CUSTOM_CONFIG: dict[str, object] = {
     "search_concurrency": 3,             # max parallel SearxNG queries
     "browser_wait_ms": 2000,             # ms to wait after page load (Playwright)
     "enable_browser": True,              # fallback to headless browser?
+    "enable_pdf_extraction": True,       # extract text from PDFs via pymupdf?
     "min_content_length": 500,           # min HTML length before browser fallback
 
     # ------------------------------------------------------------------
@@ -59,7 +60,7 @@ CUSTOM_CONFIG: dict[str, object] = {
     "synthesizer_max_tokens": 100_000,   # report section token limit
     "max_indexer_depth": 2,              # max topic hierarchy depth
     "indexer_batch_size": 5,             # documents per indexer LLM call
-    "min_accumulator_threshold": 400,    # token threshold before flushing report
+    "min_accumulator_threshold": 600,  # token threshold before flushing report
     "indexes_dir": "INDEXES",            # on-disk topic tree folder
     "workspace_dir": "workspace",        # scratch pad + final report folder
 
@@ -129,7 +130,7 @@ async def test_small() -> str:
     # Persist result
     out_dir = Path("outputs")
     out_dir.mkdir(exist_ok=True)
-    out_file = out_dir / "Probability_of_Federal_Bailout_Before_2030-Minimax-M2_7.md"
+    out_file = out_dir / "Probability_of_Federal_Bailout_Before_2030-Minimax-M2_7_v3.md"
     out_file.write_text(result, encoding="utf-8")
     print(f"\n📄 Report saved to: {out_file.resolve()}")
     print(f"⏱️  Total time: {total}")

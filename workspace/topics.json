@@ -1,9 +1,29 @@
 {
-  "Federal Bailout Probability": {
-    "Pension Crisis Overview": {},
-    "Historical Bailouts": {},
+  "U.S. Government Fiscal Position": {
+    "Long-term Fiscal Projections": {},
+    "Debt Sustainability Analysis": {},
+    "Interest Expenditure Trends": {}
+  },
+  "National Debt": {
+    "Debt Composition": {},
+    "Debt-to-GDP Analysis": {},
+    "Debt Holders": {},
+    "Historical Debt Levels": {}
+  },
+  "Financial System Stability": {
+    "Vulnerabilities Assessment": {},
+    "Near-Term Risks": {},
+    "Banking Sector Stress": {},
+    "Market Resilience Concerns": {}
+  },
+  "Bailout Risk Analysis": {
+    "Historical Precedents": {},
+    "Probability Assessment": {},
     "Risk Factors": {},
-    "Political and Public Sentiment": {},
-    "Federal Fiscal Outlook and Constraints": {}
+    "Emergency Response Mechanisms": {}
+  },
+  "International Financial Crises": {
+    "Japan Banking Crisis 1990s": {},
+    "Global Systemic Risk Trends": {}
   }
 }
