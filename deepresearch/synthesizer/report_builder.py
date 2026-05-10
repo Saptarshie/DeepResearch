@@ -4,6 +4,7 @@ from pathlib import Path
 from deepresearch.config import Config
 from deepresearch.llm_client import LLMClient
 from deepresearch.utils import sanitize_dirname
+from deepresearch.mermaid_fixer import fix_all_mermaid
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,13 @@ CITATIONS
 * NEVER fabricate citations. Only cite sources that appear in the provided context.
 * If you are synthesizing without direct source material, prefix the paragraph with (Analysis) to indicate expert synthesis.
 
+WRITING STYLE & THE "WHY" (CAUSAL CHAINS)
+- Academic but accessible tone — precise terminology, clear explanations.
+- Focus heavily on the "WHY" and "HOW". Do not just list risks (the "what"); you MUST explain the exact transmission mechanisms and causal chains (e.g., "Military spending increases -> energy disruption -> persistent inflation -> Federal Reserve cannot cut rates -> banking stress requires direct fiscal bailout").
+- Each section MUST open with a strong topic sentence that states the conclusion first, then supports it with interconnected logic.
+
+## STRUCTURE & FORMATTING
+
 ANTI-HALLUCINATION RULES
 ------------------------
 
@@ -68,7 +76,7 @@ ANTI-HALLUCINATION RULES
 * If multiple sources conflict on a fact, state the disagreement explicitly: "Source A claims X, while Source B reports Y."
 * Distinguish between factual claims from sources and your own analytical synthesis.
 
-DEDUPLICATION (CRITICAL)
+ANTI-DEDUPLICATION RULES (CRITICAL)
 ------------------------
 
 * Before writing ANY section, check the rolling summary. If the rolling summary already covers the topic, write a brief cross-reference instead of repeating: "(See [Section Name] above for full discussion.)"
@@ -113,7 +121,14 @@ class ReportBuilder:
         if self.accumulator:
             rolling_summary = self._flush_accumulator(report_file, scratch_pad, rolling_summary)
 
-        return report_file.read_text(encoding="utf-8") if report_file.exists() else ""
+        raw = report_file.read_text(encoding="utf-8") if report_file.exists() else ""
+        fixed = fix_all_mermaid(raw)
+
+        if fixed != raw:
+            report_file.write_text(fixed, encoding="utf-8")
+            logger.info("Fixed malformed Mermaid blocks in report")
+        
+        return fixed
 
     def _flush_accumulator(self, report_file: Path, scratch_pad: str, rolling_summary: str) -> str:
         if not self.accumulator:

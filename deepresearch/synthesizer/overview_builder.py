@@ -66,14 +66,18 @@ Your job is to produce a CONCISE overview that:
 - **Finding 2**: [One sentence with source attribution]
 - **Finding 3**: [One sentence with source attribution]
 
+### Core Probability / Risk Assessment
+[Provide a Markdown table summarizing the risks, probabilities, and primary drivers based on the context. E.g., Time Horizon | Probability | Primary Drivers]
+
+### Critical Transmission Mechanisms (The "Why")
+- **Mechanism 1**: [Explain the chain reaction: A causes B which causes C. Include source attribution]
+- **Mechanism 2**: [Explain the chain reaction. Include source attribution]
+
 ### Contradictions / Debates
 - [Topic]: Source A claims X, while Source B reports Y
 
 ### Gaps / Uncertainties
-- [Subtopic]: insufficient coverage or conflicting data
-
-### Cross-References
-- See also: [Related Topic A], [Related Topic B]"""
+- [Subtopic]: insufficient coverage or conflicting data"""
 
         prompt = f"Please synthesize the following context:\n\n{context}"
 

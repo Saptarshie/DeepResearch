@@ -1,29 +1,55 @@
 {
-  "U.S. Government Fiscal Position": {
-    "Long-term Fiscal Projections": {},
-    "Debt Sustainability Analysis": {},
-    "Interest Expenditure Trends": {}
+  "U.S. Fiscal Outlook": {
+    "Deficit Projections": {},
+    "Debt Levels": {},
+    "Entitlement Spending": {},
+    "Interest Costs": {},
+    "Tax Policy Impact": {}
   },
-  "National Debt": {
-    "Debt Composition": {},
-    "Debt-to-GDP Analysis": {},
-    "Debt Holders": {},
-    "Historical Debt Levels": {}
+  "Financial Stability Risks": {
+    "Valuation Pressures": {},
+    "Borrowing Risks": {},
+    "Leverage": {},
+    "Funding Risks": {},
+    "Near-Term Vulnerabilities": {}
   },
-  "Financial System Stability": {
-    "Vulnerabilities Assessment": {},
-    "Near-Term Risks": {},
-    "Banking Sector Stress": {},
-    "Market Resilience Concerns": {}
+  "Banking Sector Vulnerabilities": {
+    "Liquidity Shortfalls": {},
+    "Repo Operations": {},
+    "Major Bank Exposures": {},
+    "Commodity Short Positions": {}
   },
-  "Bailout Risk Analysis": {
-    "Historical Precedents": {},
-    "Probability Assessment": {},
-    "Risk Factors": {},
-    "Emergency Response Mechanisms": {}
+  "Fiscal Crisis Dynamics": {
+    "Debt Doom Loop": {},
+    "Fiscal Dominance": {},
+    "Crowding Out Effects": {},
+    "Confidence Erosion": {}
   },
-  "International Financial Crises": {
-    "Japan Banking Crisis 1990s": {},
-    "Global Systemic Risk Trends": {}
+  "Federal Intervention Scenarios": {
+    "Bailout History": {
+      "Historical Precedents": {},
+      "2008 Crisis Response": {},
+      "COVID-19 Response": {}
+    },
+    "Current Policy Framework": {
+      "Section 13(3) Authority": {},
+      "Dodd-Frank Restrictions": {},
+      "Congressional Debates": {}
+    },
+    "Probability Assessment": {
+      "Trigger Conditions": {},
+      "Risk Vectors": {},
+      "Timeline Projections": {}
+    }
+  },
+  "Systemic Risk Monitoring": {
+    "Fed Assessment Framework": {
+      "Shock Vulnerability Interaction": {},
+      "Four Vulnerability Categories": {}
+    },
+    "Intervention Mechanisms": {
+      "Bank Term Funding Program": {},
+      "Countercyclical Capital Buffer": {}
+    }
   }
 }

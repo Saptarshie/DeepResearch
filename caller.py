@@ -38,7 +38,7 @@ CUSTOM_CONFIG: dict[str, object] = {
     # Search & Fetch Settings
     # ------------------------------------------------------------------
     # "searxng_base_url": "http://localhost:8080",
-    "max_docs": 12,                      # stop after fetching N documents
+    "max_docs": 30,                      # stop after fetching N documents
     "max_depth": 2,                      # crawl depth for linked pages
     "fetch_timeout": 20.0,               # seconds per HTTP request
     "fetch_concurrency": 3,             # max parallel fetches
@@ -130,7 +130,7 @@ async def test_small() -> str:
     # Persist result
     out_dir = Path("outputs")
     out_dir.mkdir(exist_ok=True)
-    out_file = out_dir / "Probability_of_Federal_Bailout_Before_2030-Minimax-M2_7_v3.md"
+    out_file = out_dir / "Probability_of_Federal_Bailout_Before_2030-Minimax-M2_7_v5.md"
     out_file.write_text(result, encoding="utf-8")
     print(f"\n📄 Report saved to: {out_file.resolve()}")
     print(f"⏱️  Total time: {total}")
