@@ -1,55 +1,51 @@
 {
-  "U.S. Fiscal Outlook": {
-    "Deficit Projections": {},
-    "Debt Levels": {},
-    "Entitlement Spending": {},
-    "Interest Costs": {},
-    "Tax Policy Impact": {}
-  },
-  "Financial Stability Risks": {
-    "Valuation Pressures": {},
-    "Borrowing Risks": {},
-    "Leverage": {},
-    "Funding Risks": {},
-    "Near-Term Vulnerabilities": {}
-  },
-  "Banking Sector Vulnerabilities": {
-    "Liquidity Shortfalls": {},
-    "Repo Operations": {},
-    "Major Bank Exposures": {},
-    "Commodity Short Positions": {}
-  },
-  "Fiscal Crisis Dynamics": {
-    "Debt Doom Loop": {},
-    "Fiscal Dominance": {},
-    "Crowding Out Effects": {},
-    "Confidence Erosion": {}
-  },
-  "Federal Intervention Scenarios": {
-    "Bailout History": {
-      "Historical Precedents": {},
-      "2008 Crisis Response": {},
-      "COVID-19 Response": {}
+  "AI Coding Harness Development": {
+    "LLM Code Generation Fundamentals": {
+      "Quality Dimensions Framework": {},
+      "Training Approaches Comparison": {},
+      "Multi-Model Voting Consensus": {}
     },
-    "Current Policy Framework": {
-      "Section 13(3) Authority": {},
-      "Dodd-Frank Restrictions": {},
-      "Congressional Debates": {}
+    "Agentic Multi-Agent Orchestration": {
+      "Parallel Task Decomposition": {},
+      "Dynamic Role Assignment": {},
+      "Orchestrator-Worker Pattern": {}
     },
-    "Probability Assessment": {
-      "Trigger Conditions": {},
-      "Risk Vectors": {},
-      "Timeline Projections": {}
+    "Neuro-Symbolic Debugging": {},
+    "Causal Code Analysis": {},
+    "World Model-Driven Execution Simulation": {},
+    "Quantum-Enhanced Code Intelligence": {},
+    "Federated Privacy-Preserving Code Review": {},
+    "Self-Driving Code Laboratories": {},
+    "Formal Verification Integration": {},
+    "Hallucination Mitigation Strategies": {},
+    "Time-Bounded Experiment Orchestration": {},
+    "Hierarchical Memory Consolidation": {},
+    "Evaluation-Driven Agent Refinement": {},
+    "LSTM-Inspired Long-Context Architecture": {},
+    "Recursive Meta-Agent Task Decomposition": {},
+    "Dynamic Semantic Topology Rewiring": {},
+    "Autonomous Multi-Agent Evolution": {},
+    "Quality Assurance Integration": {
+      "Static Analysis Verification": {},
+      "Cross-Model Quality Gating": {}
     }
   },
-  "Systemic Risk Monitoring": {
-    "Fed Assessment Framework": {
-      "Shock Vulnerability Interaction": {},
-      "Four Vulnerability Categories": {}
-    },
-    "Intervention Mechanisms": {
-      "Bank Term Funding Program": {},
-      "Countercyclical Capital Buffer": {}
-    }
+  "AI Research Frontiers 2025-2030": {
+    "Neuro-Symbolic AI": {},
+    "Agentic Systems": {},
+    "World Models": {},
+    "Quantum ML": {},
+    "Federated AI": {},
+    "Autonomous Scientific Discovery": {}
+  },
+  "Emerging Paradigms": {
+    "Affective Computing Tutoring": {},
+    "Cross-Modal Code Intelligence": {},
+    "Self-Modifying Code Systems": {}
+  },
+  "Claude Model Ecosystem": {
+    "Model Specifications": {},
+    "Agentic Coding Capabilities": {},
+    "Extended Context Windows": {}
   }
 }

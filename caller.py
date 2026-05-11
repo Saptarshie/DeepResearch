@@ -38,7 +38,7 @@ CUSTOM_CONFIG: dict[str, object] = {
     # Search & Fetch Settings
     # ------------------------------------------------------------------
     # "searxng_base_url": "http://localhost:8080",
-    "max_docs": 30,                      # stop after fetching N documents
+    "max_docs": 16,                      # stop after fetching N documents
     "max_depth": 2,                      # crawl depth for linked pages
     "fetch_timeout": 20.0,               # seconds per HTTP request
     "fetch_concurrency": 3,             # max parallel fetches
@@ -79,6 +79,25 @@ def _elapsed() -> str:
     secs = int(time.perf_counter() - _START_TIME)
     return f"{secs // 3600:02d}:{(secs % 3600) // 60:02d}:{secs % 60:02d}"
 
+
+def _draw_bar(current: int, total: int, width: int = 30) -> str:
+    """Return an ASCII progress bar."""
+    if total <= 0:
+        return ""
+    filled = int(width * current / total)
+    bar = "█" * filled + "░" * (width - filled)
+    return f"[{bar}] {current}/{total}"
+
+
+# Mutable state for synthesis progress (simple, module-level)
+_synth_state: dict = {
+    "total_topics": 0,
+    "topics_processed": 0,
+    "sections_written": 0,
+    "last_bar_line": "",
+}
+
+
 def progress_callback(event_type: str, data: dict) -> None:
     """Print live progress with timestamps."""
     ts = _elapsed()
@@ -103,6 +122,37 @@ def progress_callback(event_type: str, data: dict) -> None:
             print(f"[{ts}]   ⚠ WARNING: {data.get('message', '')}")
         case "complete":
             print(f"\n[{ts}] [DONE] Report complete – {data.get('docs_count')} docs, {data.get('report_length')} chars")
+
+        # ---- Synthesis progress events ----
+        case "synth_indexer_batch":
+            cur = data.get("current_batch", 0)
+            tot = data.get("total_batches", 0)
+            print(f"[{ts}]   📚 Indexing batch {cur}/{tot}...")
+        case "synth_indexer_complete":
+            print(f"[{ts}]   📚 Indexing complete — {data.get('topics_count', '?')} topics.")
+        case "synth_overview":
+            print(f"[{ts}]   🗺️  {data.get('message', '')}")
+        case "synth_report_start":
+            _synth_state["total_topics"] = data.get("total_topics", 0)
+            _synth_state["topics_processed"] = 0
+            _synth_state["sections_written"] = 0
+            _synth_state["last_bar_line"] = ""
+            print(f"\n[{ts}]   📝 {data.get('message', 'Starting report...')}")
+        case "synth_report_section":
+            _synth_state["topics_processed"] = data.get("topics_processed", 0)
+            _synth_state["sections_written"] = data.get("section_number", 0)
+            total = _synth_state["total_topics"] or 1
+            current = _synth_state["topics_processed"]
+            bar = _draw_bar(current, total)
+            title = data.get("section_title", "")
+            line = f"[{ts}]   📝 {bar} — Section #{data.get('section_number', '?')}: {title[:50]}"
+            # Clear previous bar and rewrite
+            print(f"\r{line:<120}", end="", flush=True)
+            _synth_state["last_bar_line"] = line
+        case "synth_report_complete":
+            # Clear the bar line and print completion
+            print()
+            print(f"[{ts}]   📝 Report writing complete — {data.get('sections_written', '?')} sections.")
         case _:
             pass  # ignore unknown events
 
@@ -116,7 +166,7 @@ async def test_small() -> str:
     print("=" * 60)
 
     query = (
-        "Create me a detailed in-depth report on Probability of Federal Bailout Before 2030."
+        "Create me a detailed in-depth research-parper on How to build a complete Ai coding harness , out of the box ideas that never has been tried since now..."
     )
 
     result = await deep_search(
@@ -130,7 +180,7 @@ async def test_small() -> str:
     # Persist result
     out_dir = Path("outputs")
     out_dir.mkdir(exist_ok=True)
-    out_file = out_dir / "Probability_of_Federal_Bailout_Before_2030-Minimax-M2_7_v5.md"
+    out_file = out_dir / "Buildng_AI_Coding_Harness_v3.md"
     out_file.write_text(result, encoding="utf-8")
     print(f"\n📄 Report saved to: {out_file.resolve()}")
     print(f"⏱️  Total time: {total}")

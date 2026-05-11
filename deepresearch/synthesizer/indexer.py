@@ -1,6 +1,7 @@
 import json
 import logging
 import shutil
+from collections.abc import Callable
 from pathlib import Path
 
 from deepresearch.config import Config
@@ -46,7 +47,16 @@ Content:
 {scratch_pad}
 """
 
-    def process_docs(self, docs: list[dict], query: str) -> dict:
+    def process_docs(
+        self,
+        docs: list[dict],
+        query: str,
+        progress_callback: Callable[[str, dict], None] | None = None,
+    ) -> dict:
+        def emit(event_type: str, data: dict | None = None):
+            if progress_callback:
+                progress_callback(event_type, data or {})
+
         # Ensure fresh run
         if self.indexes_dir.exists():
             shutil.rmtree(self.indexes_dir)
@@ -87,6 +97,7 @@ Content:
             f"}}"
         )
 
+        total_batches = (len(docs) + batch_size - 1) // batch_size
         logger.info(
             "Starting indexing of %s documents (batch size=%s)...",
             len(docs),
@@ -94,12 +105,19 @@ Content:
         )
         for batch_start in range(0, len(docs), batch_size):
             batch = docs[batch_start:batch_start + batch_size]
+            batch_num = batch_start // batch_size + 1
             logger.info(
                 "Processing batch %s-%s of %s",
                 batch_start + 1,
                 batch_start + len(batch),
                 len(docs),
             )
+            emit("synth_indexer_batch", {
+                "current_batch": batch_num,
+                "total_batches": total_batches,
+                "docs_in_batch": len(batch),
+                "message": f"Indexing batch {batch_num}/{total_batches} ({len(batch)} docs)...",
+            })
 
             prompt = self._build_prompt(query, batch, topics_json, scratch_pad)
             try:
@@ -152,4 +170,8 @@ Content:
         with open(workspace / "topics.json", "w", encoding="utf-8") as f:
             json.dump(topics_json, f, indent=2)
 
+        emit("synth_indexer_complete", {
+            "topics_count": len(topics_json),
+            "message": f"Indexing complete — {len(topics_json)} top-level topics extracted.",
+        })
         return topics_json

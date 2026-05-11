@@ -244,6 +244,12 @@ async def deep_search(
         "phase": "synthesizing",
         "message": f"Synthesizing report from {len(docs)} documents...",
     })
-    result = await loop.run_in_executor(None, synthesizer.synthesize, query, docs)
+
+    def _synth_progress(event_type: str, data: dict):
+        emit(event_type, data)
+
+    result = await loop.run_in_executor(
+        None, synthesizer.synthesize, query, docs, _synth_progress
+    )
     emit("complete", {"docs_count": len(docs), "report_length": len(result)})
     return result
