@@ -35,9 +35,6 @@ class PageFetcher:
         self.browser_wait_ms = browser_wait_ms
         self.enable_browser = enable_browser
         self._http_client: httpx.AsyncClient | None = None
-        self._playwright: Any | None = None
-        self._browser: Any | None = None
-        self._page: Any | None = None
         self._limits = Limits(max_connections=100, max_keepalive_connections=20)
 
     async def _get_http_client(self) -> httpx.AsyncClient:
@@ -50,12 +47,35 @@ class PageFetcher:
             )
         return self._http_client
 
-    async def _get_browser(self) -> Any:
-        if self._browser is None:
-            from playwright.async_api import async_playwright
-            self._playwright = await async_playwright().start()
-            self._browser = await self._playwright.chromium.launch(headless=True)
-        return self._browser
+    @staticmethod
+    def _sync_fetch_browser(
+        url: str, timeout: float, browser_wait_ms: int
+    ) -> FetchResult:
+        """Sync Playwright fetch — safe to run inside run_in_executor."""
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            try:
+                response = page.goto(
+                    url, wait_until="networkidle", timeout=int(timeout * 1000)
+                )
+                page.wait_for_timeout(browser_wait_ms)
+                html = page.content()
+                final_url = page.url
+                status_code = response.status if response else 0
+            finally:
+                page.close()
+                browser.close()
+        return FetchResult(
+            url=url,
+            final_url=final_url,
+            status_code=status_code,
+            html=html,
+            fetch_mode="browser",
+            content_type="text/html",
+        )
 
     async def fetch_http(self, url: str) -> FetchResult:
         client = await self._get_http_client()
@@ -81,32 +101,15 @@ class PageFetcher:
         )
 
     async def fetch_browser(self, url: str) -> FetchResult:
-        browser = await self._get_browser()
-        if self._page is None or getattr(self._page, "is_closed", lambda: True)():
-            self._page = await browser.new_page()
-        page = self._page
-        try:
-            response = await page.goto(
-                url, wait_until="networkidle", timeout=int(self.timeout * 1000)
-            )
-            await page.wait_for_timeout(self.browser_wait_ms)
-            html = await page.content()
-            final_url = page.url
-            status_code = response.status if response else 0
-        except Exception:
-            self._page = None
-            raise
-        return FetchResult(
-            url=url,
-            final_url=final_url,
-            status_code=status_code,
-            html=html,
-            fetch_mode="browser",
-            content_type="text/html",
+        """Use sync Playwright in executor to avoid asyncio subprocess issues on Windows."""
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(
+            None, self._sync_fetch_browser, url, self.timeout, self.browser_wait_ms
         )
 
     async def fetch_pdf(self, url: str, max_pages: int = 50) -> FetchResult:
         import fitz
+
         client = await self._get_http_client()
         r = await client.get(url)
         r.raise_for_status()
@@ -124,12 +127,20 @@ class PageFetcher:
         except Exception as e:
             logger.warning("PDF extraction failed for %s: %s", url, e)
             return FetchResult(
-                url=url, final_url=str(r.url), status_code=r.status_code,
-                html="", fetch_mode="pdf", content_type=content_type,
+                url=url,
+                final_url=str(r.url),
+                status_code=r.status_code,
+                html="",
+                fetch_mode="pdf",
+                content_type=content_type,
             )
         return FetchResult(
-            url=url, final_url=str(r.url), status_code=r.status_code,
-            html=text, fetch_mode="pdf", content_type=content_type,
+            url=url,
+            final_url=str(r.url),
+            status_code=r.status_code,
+            html=text,
+            fetch_mode="pdf",
+            content_type=content_type,
         )
 
     async def fetch(self, url: str, force_browser: bool = False) -> FetchResult:
@@ -158,19 +169,7 @@ class PageFetcher:
         raise RuntimeError("Unexpected end of fetch loop")
 
     async def close(self) -> None:
-        if self._page is not None:
-            with contextlib.suppress(Exception):
-                await self._page.close()
-            self._page = None
         if self._http_client is not None:
             with contextlib.suppress(Exception):
                 await self._http_client.aclose()
             self._http_client = None
-        if self._browser is not None:
-            with contextlib.suppress(Exception):
-                await self._browser.close()
-            self._browser = None
-        if self._playwright is not None:
-            with contextlib.suppress(Exception):
-                await self._playwright.stop()
-            self._playwright = None

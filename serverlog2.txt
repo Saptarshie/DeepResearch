@@ -1,0 +1,516 @@
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'caller.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2108]
+WARNING:  WatchFiles detected changes in 'server\pdf_generator.py'. Reloading...
+ INFO:     Started server process [22800]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+ERROR:    Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Python313\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "C:\Python313\Lib\asyncio\runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 701, in lifespan
+    await receive()
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\uvicorn\lifespan\on.py", line 137, in receive
+    return await self.receive_queue.get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\asyncio\queues.py", line 186, in get
+    await getter
+asyncio.exceptions.CancelledError
+
+INFO:     Started server process [54624]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'caller.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [54624]
+INFO:     Started server process [20344]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server\research_service.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [20344]
+INFO:     Started server process [5640]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'deepresearch\fetcher.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5640]
+INFO:     Started server process [44576]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests\test_config.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [44576]
+INFO:     Started server process [57720]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests\test_config.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [57720]
+INFO:     Started server process [2264]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests\test_config.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [2264]
+INFO:     Started server process [25468]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests\test_fetcher.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25468]
+INFO:     Started server process [53020]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'tests\test_config.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [53020]
+INFO:     Started server process [32436]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:57961 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57961 - "GET /static/app.js HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57961 - "GET /api/jobs//987c4640-80a3-4744-8b3c-966fd2ec5aee HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57961 - "GET /api/jobs//987c4640-80a3-4744-8b3c-966fd2ec5aee HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:57961 - "GET /api/jobs//987c4640-80a3-4744-8b3c-966fd2ec5aee HTTP/1.1" 404 Not Found
+Mermaid SVG render timeout, proceeding anyway
+INFO:     127.0.0.1:57961 - "GET /api/jobs/user1/987c4640-80a3-4744-8b3c-966fd2ec5aee/download?fmt=pdf HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'server\pdf_generator.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [32436]
+INFO:     Started server process [46844]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:57005 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57005 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57005 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57005 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57005 - "GET /api/jobs/user1/987c4640-80a3-4744-8b3c-966fd2ec5aee/download?fmt=pdf HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'server\pdf_generator.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [46844]
+INFO:     Started server process [28572]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server\pdf_generator.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28572]
+INFO:     Started server process [50100]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'server\pdf_generator.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [50100]
+INFO:     Started server process [13700]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'test_mermaid_fix.py'. Reloading...
+WARNING:  WatchFiles detected changes in 'test_mermaid_fix.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13700]
+INFO:     Started server process [15752]
+INFO:     Waiting for application startup.
+WARNING:  WatchFiles detected changes in 'test_mermaid_fix.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13700]
+INFO:     Started server process [15752]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'test_mermaid_fix.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15752]
+WARNING:  WatchFiles detected changes in 'test_mermaid_fix.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13700]
+INFO:     Started server process [15752]
+INFO:     Waiting for application startup.
+INFO:     Finished server process [13700]
+INFO:     Started server process [15752]
+INFO:     Waiting for application startup.
+INFO:     Started server process [15752]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'test_mermaid_fix.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15752]
+INFO:     Started server process [30300]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:54109 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49193 - "GET /api/jobs/user1/987c4640-80a3-4744-8b3c-966fd2ec5aee/download?fmt=pdf HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58415 - "POST /api/research HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52292 - "GET /api/jobs/user1/35eb5ed4-3dc9-4246-857e-282e71fb04de/progress HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58415 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+Research job 35eb5ed4-3dc9-4246-857e-282e71fb04de failed
+Traceback (most recent call last):
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\server\research_service.py", line 142, in run_research
+    report = await deep_search(
+             ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\deep_search.py", line 78, in deep_search
+    plan = await loop.run_in_executor(None, planner.make_plan, query)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\planner.py", line 47, in make_plan
+    data = self.llm.json(prompt, system=SYSTEM_PROMPT)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 240, in json
+    return client.json(prompt, system, max_tokens)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 179, in json
+    text = extract_and_repair_json(self.generate(prompt, system, max_tokens))
+                                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 171, in generate
+    return self._generate_with_retry(_call, max_retries)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 74, in _generate_with_retry
+    raise last_error from None
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 68, in _generate_with_retry
+    return generate_fn()
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 153, in _call
+    stream = self.client.chat.completions.create(
+        model=self.model,
+    ...<5 lines>...
+        stream=True,
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_utils\_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\resources\chat\completions\completions.py", line 1211, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_base_client.py", line 1314, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_base_client.py", line 1087, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.AuthenticationError: Error code: 401 - {'type': 'error', 'error': {'type': 'ModelError', 'message': 'Model MiniMax-M2.7 not supported'}}
+INFO:     127.0.0.1:52292 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65378 - "POST /api/research HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65378 - "GET /api/jobs/user1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49670 - "GET /api/jobs/user1/300ae3dc-1804-43eb-b19b-4de8ceaaffc0/progress HTTP/1.1" 200 OK
+Fetch failed for https://ihris.health.gov.mw/sites/mL81FD/603807/the_definitive_book_of_body_language_how_to__read-othersx27_attitudes_by_their_gestures_allan_pease.pdf: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'ihris.health.gov.mw'. (_ssl.c:1032)
+Fetch failed for https://www.yic.edu.et/primo-explore/scholarship/filedownload.ashx/influence%20the%20psychology%20of%20persuasion%20by%20robert%20cialdini.pdf: All connection attempts failed
+WARNING:  WatchFiles detected changes in 'deepresearch\synthesizer\report_builder.py'. Reloading...
+ INFO:     Shutting down
+INFO:     Waiting for connections to close. (CTRL+C to force quit)
+Research job 300ae3dc-1804-43eb-b19b-4de8ceaaffc0 failed
+Traceback (most recent call last):
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\server\research_service.py", line 142, in run_research
+    report = await deep_search(
+             ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\deep_search.py", line 201, in deep_search
+    gap_report = await loop.run_in_executor(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        None, critic.find_gaps, query, docs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\critic.py", line 42, in find_gaps
+    data = self.llm.json(prompt, system=SYSTEM_PROMPT)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 240, in json
+    return client.json(prompt, system, max_tokens)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 179, in json
+    text = extract_and_repair_json(self.generate(prompt, system, max_tokens))
+                                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 171, in generate
+    return self._generate_with_retry(_call, max_retries)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 74, in _generate_with_retry
+    raise last_error from None
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 68, in _generate_with_retry
+    return generate_fn()
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 153, in _call
+    stream = self.client.chat.completions.create(
+        model=self.model,
+    ...<5 lines>...
+        stream=True,
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_utils\_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\resources\chat\completions\completions.py", line 1211, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_base_client.py", line 1314, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_base_client.py", line 1054, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\server\research_service.py", line 142, in run_research
+    report = await deep_search(
+             ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\deep_search.py", line 201, in deep_search
+    gap_report = await loop.run_in_executor(
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        None, critic.find_gaps, query, docs
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\critic.py", line 42, in find_gaps
+    data = self.llm.json(prompt, system=SYSTEM_PROMPT)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 240, in json
+    return client.json(prompt, system, max_tokens)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 179, in json
+    text = extract_and_repair_json(self.generate(prompt, system, max_tokens))
+                                   ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 171, in generate
+    return self._generate_with_retry(_call, max_retries)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 74, in _generate_with_retry
+    raise last_error from None
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 68, in _generate_with_retry
+    return generate_fn()
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\deepresearch\llm_client.py", line 153, in _call
+    stream = self.client.chat.completions.create(
+        model=self.model,
+    ...<5 lines>...
+        stream=True,
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_utils\_utils.py", line 287, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\resources\chat\completions\completions.py", line 1211, in create
+    return self._post(
+           ~~~~~~~~~~^
+        "/chat/completions",
+        ^^^^^^^^^^^^^^^^^^^^
+    ...<47 lines>...
+        stream_cls=Stream[ChatCompletionChunk],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_base_client.py", line 1314, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\openai\_base_client.py", line 1054, in request
+    raise APIConnectionError(request=request) from err
+openai.APIConnectionError: Connection error.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\uvicorn\protocols\http\httptools_impl.py", line 409, in run_asgi      
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\uvicorn\middleware\proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\fastapi\applications.py", line 1133, in __call__
+    await super().__call__(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\applications.py", line 113, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\middleware\errors.py", line 186, in __call__
+    raise exc
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\middleware\errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\fastapi\routing.py", line 123, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\fastapi\routing.py", line 110, in app
+    await response(scope, receive, send)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\responses.py", line 168, in __call__
+    await self.background()
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\background.py", line 42, in __call__
+    await task()
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\starlette\background.py", line 27, in __call__
+    await self.func(*self.args, **self.kwargs)
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\server\research_service.py", line 173, in run_research
+    await _save_event("warning", {"message": f"Research failed: {err_msg}"})
+  File "D:\prac_prog\fun\tmp\deepsearch3-prev\deep_search\server\research_service.py", line 127, in _save_event
+    await jobs_collection().update_one(
+    ...<2 lines>...
+    )
+  File "C:\Python313\Lib\concurrent\futures\thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\collection.py", line 1336, in update_one
+    self._update_retryable(
+    ~~~~~~~~~~~~~~~~~~~~~~^
+        filter,
+        ^^^^^^^
+    ...<11 lines>...
+        comment=comment,
+        ^^^^^^^^^^^^^^^^
+    ),
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\collection.py", line 1118, in _update_retryable   
+    return self._database.client._retryable_write(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        (write_concern or self.write_concern).acknowledged and not multi,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        operation,
+        ^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 2082, in _retryable_write  
+    return self._retry_with_session(retryable, func, s, bulk, operation, operation_id)
+           ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 1968, in _retry_with_session
+    return self._retry_internal(
+           ~~~~~~~~~~~~~~~~~~~~^
+        func=func,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        operation_id=operation_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\_csot.py", line 125, in csot_wrapper
+    return func(self, *args, **kwargs)
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 2014, in _retry_internal   
+    ).run()
+      ~~~^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 2765, in run
+    return self._read() if self._is_read else self._write()
+                                              ~~~~~~~~~~~^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 2875, in _write
+    self._server = self._get_server()
+                   ~~~~~~~~~~~~~~~~^^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 2858, in _get_server       
+    return self._client._select_server(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self._server_selector,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+        operation_id=self._operation_id,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\mongo_client.py", line 1833, in _select_server    
+    server = topology.select_server(
+        server_selector,
+    ...<2 lines>...
+        operation_id=operation_id,
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\topology.py", line 409, in select_server
+    server = self._select_server(
+        selector,
+    ...<4 lines>...
+        operation_id=operation_id,
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\topology.py", line 387, in _select_server
+    servers = self.select_servers(
+        selector, operation, server_selection_timeout, address, operation_id
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\topology.py", line 294, in select_servers
+    server_descriptions = self._select_servers_loop(
+        selector, server_timeout, operation, operation_id, address
+    )
+  File "C:\Users\sapta\AppData\Roaming\Python\Python313\site-packages\pymongo\synchronous\topology.py", line 344, in _select_servers_loop   
+    raise ServerSelectionTimeoutError(
+        f"{self._error_message(selector)}, Timeout: {timeout}s, Topology Description: {self.description!r}"
+    )
+pymongo.errors.ServerSelectionTimeoutError: ac-wmo1rvs-shard-00-02.kgyfkai.mongodb.net:27017: [Errno 11001] getaddrinfo failed (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-wmo1rvs-shard-00-01.kgyfkai.mongodb.net:27017: [Errno 11001] getaddrinfo failed (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms),ac-wmo1rvs-shard-00-00.kgyfkai.mongodb.net:27017: [Errno 11001] getaddrinfo failed (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 5.0s, Topology Description: <TopologyDescription id: 6a034e6f005a9305f642bf0a, topology_type: ReplicaSetNoPrimary, servers: [<ServerDescription ('ac-wmo1rvs-shard-00-00.kgyfkai.mongodb.net', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('ac-wmo1rvs-shard-00-00.kgyfkai.mongodb.net:27017: [Errno 11001] getaddrinfo failed (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-wmo1rvs-shard-00-01.kgyfkai.mongodb.net', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('ac-wmo1rvs-shard-00-01.kgyfkai.mongodb.net:27017: [Errno 11001] getaddrinfo failed (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>, <ServerDescription ('ac-wmo1rvs-shard-00-02.kgyfkai.mongodb.net', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('ac-wmo1rvs-shard-00-02.kgyfkai.mongodb.net:27017: [Errno 11001] getaddrinfo failed (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>

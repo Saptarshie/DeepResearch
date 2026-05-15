@@ -1,3 +1,4 @@
+import difflib
 import json
 import logging
 from collections.abc import Callable
@@ -402,18 +403,44 @@ Topics:
             name_set = set(topics_dict.keys())
             ordered: list[tuple[str, Any]] = []
             seen: set[str] = set()
+            remaining = set(name_set)
 
             for name in ordered_names:
-                if name in name_set and name not in seen:
+                if name in remaining:
                     ordered.append((name, topics_dict[name]))
                     seen.add(name)
-                elif name not in name_set:
-                    logger.debug("LLM returned unknown topic '%s' at level %s; skipping", name, " > ".join(current_path) or "root")
+                    remaining.discard(name)
+                else:
+                    # Try similarity-based matching for near-misses
+                    similar = self._find_similar_topic(name, remaining)
+                    if similar:
+                        logger.debug(
+                            "Similarity match: LLM returned '%s' → matched to '%s'",
+                            name, similar,
+                        )
+                        ordered.append((similar, topics_dict[similar]))
+                        seen.add(similar)
+                        remaining.discard(similar)
+                    else:
+                        logger.debug(
+                            "LLM returned unknown topic '%s' at level %s; skipping",
+                            name, " > ".join(current_path) or "root",
+                        )
 
             # Append any missing topics at the end (never drop content)
             for name in topics_dict:
                 if name not in seen:
                     ordered.append((name, topics_dict[name]))
+
+            # Safety: if we matched very few topics via LLM, fall back to original
+            if len(seen) < len(name_set) * 0.5:
+                logger.warning(
+                    "LLM ordering only matched %s/%s topics at level '%s'; "
+                    "falling back to original order.",
+                    len(seen), len(name_set),
+                    " > ".join(current_path) or "root",
+                )
+                return list(topics_dict.items())
 
             logger.info(
                 "Intelligently sorted %s topics at level '%s' → order: %s",
@@ -430,6 +457,40 @@ Topics:
                 e,
             )
             return list(topics_dict.items())
+
+    def _find_similar_topic(
+        self,
+        candidate: str,
+        candidates: set[str],
+        threshold: float = 0.6,
+    ) -> str | None:
+        """Find the most similar topic name using difflib.SequenceMatcher.
+
+        Args:
+            candidate: The topic name to match (from LLM response).
+            candidates: Set of remaining valid topic names.
+            threshold: Minimum similarity ratio (0.0-1.0) to accept a match.
+
+        Returns:
+            The best matching topic name, or None if no match exceeds threshold.
+        """
+        if not candidates:
+            return None
+
+        best_match = None
+        best_ratio = 0.0
+
+        for topic_name in candidates:
+            ratio = difflib.SequenceMatcher(
+                None,
+                candidate.lower(),
+                topic_name.lower(),
+            ).ratio()
+            if ratio > best_ratio and ratio >= threshold:
+                best_ratio = ratio
+                best_match = topic_name
+
+        return best_match
 
     def _traverse_topics(
         self,

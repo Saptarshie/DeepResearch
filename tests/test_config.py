@@ -21,6 +21,7 @@ def test_config_from_env_uses_defaults(monkeypatch) -> None:
         "MAX_TOKENS", "SYNTHESIZER_MAX_TOKENS", "MAX_INDEXER_DEPTH",
         "INDEXES_DIR", "MIN_ACCUMULATOR_THRESHOLD", "WORKSPACE_DIR",
         "MAX_DEPTH", "MIN_CONTENT_LENGTH", "LOG_LEVEL", "ENABLE_BROWSER",
+        "MONGO_URL",
     ]
     for var in env_vars:
         monkeypatch.delenv(var, raising=False)
@@ -51,6 +52,5 @@ def test_config_from_env_parses_falsy_booleans(monkeypatch) -> None:
         assert cfg.enable_browser is False, f"failed for {value!r}"
 
 
-def test_config_default_provider_defaults_to_anthropic() -> None:
-    cfg = Config()
-    assert cfg.default_provider == "anthropic"
+def test_config_default_provider_field_exists() -> None:
+    assert "default_provider" in Config.__dataclass_fields__

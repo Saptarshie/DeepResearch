@@ -1,0 +1,25 @@
+/* Minimal custom styles beyond Tailwind */
+#progressLog::-webkit-scrollbar {
+  width: 6px;
+}
+#progressLog::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+#progressLog::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+#progressLog::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+#historyList::-webkit-scrollbar {
+  width: 5px;
+}
+#historyList::-webkit-scrollbar-track {
+  background: transparent;
+}
+#historyList::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}

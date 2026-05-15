@@ -80,3 +80,102 @@ class TestDeduplicateSectionHeadings:
         content = "## Photosynthesis\nContent."
         result = builder._deduplicate_section_headings(content)
         assert "## Photosynthesis" in result
+
+
+class TestFindSimilarTopic:
+    def test_exact_match(self, builder):
+        result = builder._find_similar_topic(
+            "Photosynthesis", {"Photosynthesis", "Calvin Cycle"}
+        )
+        assert result == "Photosynthesis"
+
+    def test_case_insensitive_match(self, builder):
+        result = builder._find_similar_topic(
+            "photosynthesis", {"Photosynthesis", "Calvin Cycle"}
+        )
+        assert result == "Photosynthesis"
+
+    def test_punctuation_difference(self, builder):
+        result = builder._find_similar_topic(
+            "Self Improving Learning Loops",
+            {"Self-Improving Learning Loops", "Other Topic"},
+        )
+        assert result == "Self-Improving Learning Loops"
+
+    def test_no_good_match(self, builder):
+        result = builder._find_similar_topic(
+            "Completely Unrelated", {"Photosynthesis", "Calvin Cycle"}
+        )
+        assert result is None
+
+    def test_empty_candidates(self, builder):
+        result = builder._find_similar_topic("Photosynthesis", set())
+        assert result is None
+
+    def test_threshold_too_high(self, builder):
+        result = builder._find_similar_topic(
+            "AI", {"Photosynthesis", "Calvin Cycle"}, threshold=0.9
+        )
+        assert result is None
+
+
+class TestSortTopicsIntelligently:
+    def test_exact_llm_response(self, builder):
+        topics = {
+            "Topic B": {"sub": {}},
+            "Topic A": {"sub": {}},
+            "Topic C": {"sub": {}},
+        }
+        builder.llm.json.return_value = ["Topic A", "Topic B", "Topic C"]
+        result = builder._sort_topics_intelligently(topics, ["Root"])
+        names = [n for n, _ in result]
+        assert names == ["Topic A", "Topic B", "Topic C"]
+
+    def test_similarity_matched_llm_response(self, builder):
+        topics = {
+            "Self-Improving Learning Loops": {"sub": {}},
+            "Other Topic": {"sub": {}},
+        }
+        # LLM returns slightly misspelled name
+        builder.llm.json.return_value = ["Self Improving Learning Loops", "Other Topic"]
+        result = builder._sort_topics_intelligently(topics, ["Root"])
+        names = [n for n, _ in result]
+        assert names == ["Self-Improving Learning Loops", "Other Topic"]
+
+    def test_low_coverage_fallback_to_original(self, builder):
+        topics = {
+            "Topic A": {"sub": {}},
+            "Topic B": {"sub": {}},
+            "Topic C": {"sub": {}},
+            "Topic D": {"sub": {}},
+        }
+        # LLM only returns 1 valid topic out of 4 (25% < 50% threshold)
+        builder.llm.json.return_value = ["Topic A"]
+        result = builder._sort_topics_intelligently(topics, ["Root"])
+        names = [n for n, _ in result]
+        # Should fall back to original order
+        assert names == ["Topic A", "Topic B", "Topic C", "Topic D"]
+
+    def test_exception_fallback_to_original(self, builder):
+        topics = {
+            "Topic B": {"sub": {}},
+            "Topic A": {"sub": {}},
+        }
+        builder.llm.json.side_effect = Exception("API Error")
+        result = builder._sort_topics_intelligently(topics, ["Root"])
+        names = [n for n, _ in result]
+        # Should fall back to original dict order
+        assert names == ["Topic B", "Topic A"]
+
+    def test_single_topic_no_sorting(self, builder):
+        topics = {"Only Topic": {"sub": {}}}
+        result = builder._sort_topics_intelligently(topics, ["Root"])
+        names = [n for n, _ in result]
+        assert names == ["Only Topic"]
+
+    def test_empty_subtopics_dict(self, builder):
+        topics = {"Topic A": {}, "Topic B": {}}
+        builder.llm.json.return_value = ["Topic B", "Topic A"]
+        result = builder._sort_topics_intelligently(topics, ["Root"])
+        names = [n for n, _ in result]
+        assert names == ["Topic B", "Topic A"]

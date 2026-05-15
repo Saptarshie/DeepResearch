@@ -1,51 +1,5 @@
 {
-  "AI Coding Harness Development": {
-    "LLM Code Generation Fundamentals": {
-      "Quality Dimensions Framework": {},
-      "Training Approaches Comparison": {},
-      "Multi-Model Voting Consensus": {}
-    },
-    "Agentic Multi-Agent Orchestration": {
-      "Parallel Task Decomposition": {},
-      "Dynamic Role Assignment": {},
-      "Orchestrator-Worker Pattern": {}
-    },
-    "Neuro-Symbolic Debugging": {},
-    "Causal Code Analysis": {},
-    "World Model-Driven Execution Simulation": {},
-    "Quantum-Enhanced Code Intelligence": {},
-    "Federated Privacy-Preserving Code Review": {},
-    "Self-Driving Code Laboratories": {},
-    "Formal Verification Integration": {},
-    "Hallucination Mitigation Strategies": {},
-    "Time-Bounded Experiment Orchestration": {},
-    "Hierarchical Memory Consolidation": {},
-    "Evaluation-Driven Agent Refinement": {},
-    "LSTM-Inspired Long-Context Architecture": {},
-    "Recursive Meta-Agent Task Decomposition": {},
-    "Dynamic Semantic Topology Rewiring": {},
-    "Autonomous Multi-Agent Evolution": {},
-    "Quality Assurance Integration": {
-      "Static Analysis Verification": {},
-      "Cross-Model Quality Gating": {}
-    }
-  },
-  "AI Research Frontiers 2025-2030": {
-    "Neuro-Symbolic AI": {},
-    "Agentic Systems": {},
-    "World Models": {},
-    "Quantum ML": {},
-    "Federated AI": {},
-    "Autonomous Scientific Discovery": {}
-  },
-  "Emerging Paradigms": {
-    "Affective Computing Tutoring": {},
-    "Cross-Modal Code Intelligence": {},
-    "Self-Modifying Code Systems": {}
-  },
-  "Claude Model Ecosystem": {
-    "Model Specifications": {},
-    "Agentic Coding Capabilities": {},
-    "Extended Context Windows": {}
+  "Topic A": {
+    "Sub B": {}
   }
 }

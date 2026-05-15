@@ -31,7 +31,7 @@ CUSTOM_CONFIG: dict[str, object] = {
     # "anthropic_model": "claude-sonnet-4-20250514",
     "openai_api_key": "sk-PnHm6w905QCn6sDeRnOfj0OtZWWaC6BZx56EvOdr9Bkr055frGXGcrNEF641Rz3C",                # set via .env or leave blank
     "openai_base_url": "https://opencode.ai/zen/go/v1",
-    "openai_model": "minimax-m2.7",
+    "openai_model": "deepseek-v4-flash",
     "default_provider": "openai",     # "anthropic" | "openai"
 
     # ------------------------------------------------------------------
@@ -177,10 +177,10 @@ async def test_small() -> str:
 
     total = _elapsed()
 
-    # Persist result
+    # Persist resultoutput
     out_dir = Path("outputs")
     out_dir.mkdir(exist_ok=True)
-    out_file = out_dir / "Buildng_AI_Coding_Harness_v3.md"
+    out_file = out_dir / "test1-deepseek-v4-flash-1.md"
     out_file.write_text(result, encoding="utf-8")
     print(f"\n📄 Report saved to: {out_file.resolve()}")
     print(f"⏱️  Total time: {total}")

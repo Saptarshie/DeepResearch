@@ -192,6 +192,79 @@ await deep_search("...", progress_callback=my_callback)
 
 **Event types:** `status`, `plan`, `search`, `document`, `gaps`, `warning`, `complete`, `synth_indexer_batch`, `synth_indexer_complete`, `synth_overview`, `synth_report_start`, `synth_report_section`, `synth_report_complete`.
 
+## Web Server (Multi-User)
+
+A FastAPI server is included for running DeepResearch as a web service with:
+
+- **Multi-user isolation** — per-user `workspace/<user>` and `INDEXES/<user>` directories
+- **Bring-your-own API key** — clients can supply their own key, model, and endpoint URL
+- **Live progress** — Server-Sent Events (SSE) stream real-time updates
+- **Persistent storage** — reports stored in MongoDB for re-download
+- **PDF export** — Mermaid diagrams rendered via Playwright
+
+### Setup
+
+```bash
+# 1. Install dependencies (includes fastapi, uvicorn, motor)
+pip install -e ".[dev]"
+
+# 2. Start MongoDB (local or cloud)
+# Local:
+docker run -d -p 27017:27017 --name mongo mongo:7
+# Or set connection string in .env:
+MONGO_URL=mongodb+srv://user:pass@cluster.mongodb.net/deepresearch
+
+# 3. Run the server
+uvicorn server.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/` | Web UI |
+| `POST` | `/api/research` | Start research job |
+| `GET` | `/api/jobs/{username}` | List user's jobs |
+| `GET` | `/api/jobs/{username}/{job_id}` | Job detail |
+| `GET` | `/api/jobs/{username}/{job_id}/progress` | SSE progress stream |
+| `GET` | `/api/jobs/{username}/{job_id}/download?fmt=markdown` | Download `.md` |
+| `GET` | `/api/jobs/{username}/{job_id}/download?fmt=pdf` | Download `.pdf` |
+
+### Example: Start Research via API
+
+```bash
+curl -X POST http://localhost:8000/api/research \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "alice",
+    "query": "How does CRISPR gene editing work?",
+    "provider": "openai",
+    "api_key": "sk-...",
+    "base_url": "https://api.openai.com/v1",
+    "model": "gpt-4o",
+    "max_docs": 15
+  }'
+```
+
+Returns:
+```json
+{"job_id": "uuid", "username": "alice", "query": "...", "status": "running", "created_at": "..."}
+```
+
+### Example: Stream Progress
+
+```bash
+curl -N http://localhost:8000/api/jobs/alice/{job_id}/progress
+```
+
+### Frontend Features
+
+- Clean, responsive UI with Tailwind CSS
+- Real-time progress bar and colored log output
+- Collapsible advanced settings panel
+- Job history with one-click re-download
+- Markdown preview of completed reports
+
 ## Testing
 
 ```bash
@@ -200,7 +273,7 @@ pytest tests/ -q
 
 Lint:
 ```bash
-ruff check deepresearch/ tests/
+ruff check deepresearch/ tests/ server/
 ```
 
 ## Requirements
@@ -208,6 +281,7 @@ ruff check deepresearch/ tests/
 - Python >= 3.11
 - SearxNG instance (or public instance) for web search
 - Anthropic and/or OpenAI API key
+- MongoDB (optional for server mode; falls back to localhost)
 
 ## License
 

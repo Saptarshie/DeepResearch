@@ -40,6 +40,7 @@ class Config:
         "LOG_LEVEL": ("log_level", str),
         "ENABLE_BROWSER": ("enable_browser", lambda v: v.strip().lower() in ("true", "1", "yes")),
         "ENABLE_PDF_EXTRACTION": ("enable_pdf_extraction", lambda v: v.strip().lower() in ("true", "1", "yes")),
+        "MONGO_URL": ("mongo_url", str),
     }
 
     searxng_base_url: str = "http://localhost:8080"
@@ -49,7 +50,7 @@ class Config:
     openai_api_key: str = ""
     openai_model: str = "gpt-4o"
     openai_base_url: str = "https://api.openai.com/v1"
-    default_provider: str = "anthropic"
+    default_provider: str = "openai"
     max_docs: int = 100
     critique_batch_size: int = 10
     fetch_timeout: float = 20.0
@@ -71,6 +72,7 @@ class Config:
     enable_mermaid_diagrams: bool = True
     enable_markdown_tables: bool = True
     report_citation_style: str = "inline"
+    mongo_url: str = "mongodb://localhost:27017/deepresearch"
 
     @classmethod
     def from_env(cls) -> Config:

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepResearch</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+<!-- Header -->
+<header class="bg-slate-900 text-white shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center font-bold text-sm">DR</div>
+      <h1 class="text-xl font-semibold tracking-tight">DeepResearch</h1>
+    </div>
+    <div class="flex items-center gap-4 text-sm">
+      <div id="connStatus" class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Ready</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main -->
+<main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+  <!-- Left: Form -->
+  <section class="lg:col-span-1 space-y-4">
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+      <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">New Research</h2>
+      <form id="researchForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Username</label>
+          <input type="text" id="username" required value="user1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-600 mb-1">Research Query</label>
+          <textarea id="query" rows="4" required placeholder="Enter your research topic..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition resize-y"></textarea>
+        </div>
+
+        <!-- Advanced toggle -->
+        <button type="button" id="advToggle" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+          Advanced Settings
+        </button>
+
+        <div id="advancedPanel" class="hidden space-y-3 pt-2 border-t border-slate-100">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Provider</label>
+              <select id="provider" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                <option value="anthropic">Anthropic</option>
+                <option value="openai">OpenAI</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Model</label>
+              <input type="text" id="model" placeholder="e.g. claude-sonnet-4-20250514" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">API Key <span class="text-slate-400 font-normal">(optional — falls back to server default)</span></label>
+            <input type="password" id="apiKey" placeholder="sk-..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Base URL <span class="text-slate-400 font-normal">(optional)</span></label>
+            <input type="text" id="baseUrl" placeholder="https://api.openai.com/v1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Max Docs</label>
+              <input type="number" id="maxDocs" value="10" min="1" max="200" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Max Depth</label>
+              <input type="number" id="maxDepth" value="2" min="0" max="5" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Max Tokens</label>
+              <input type="number" id="maxTokens" value="8192" min="1024" max="128000" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+            </div>
+          </div>
+          <div class="flex items-center gap-4">
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input type="checkbox" id="enableBrowser" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+              Enable Browser Fallback
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input type="checkbox" id="enablePdf" checked class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+              Enable PDF Extraction
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg transition flex items-center justify-center gap-2">
+          <svg id="btnSpinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+          <span id="btnText">Start Research</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Job History -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">History</h2>
+        <button id="refreshHistory" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">Refresh</button>
+      </div>
+      <div id="historyList" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+        <div class="text-xs text-slate-400 text-center py-4">No jobs yet</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Center + Right: Progress & Output -->
+  <section class="lg:col-span-2 space-y-4">
+    <!-- Progress Card -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Live Progress</h2>
+        <div id="jobBadge" class="hidden px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">Idle</div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="mb-3">
+        <div class="flex justify-between text-xs text-slate-500 mb-1">
+          <span id="progressLabel">Waiting to start...</span>
+          <span id="progressPercent">0%</span>
+        </div>
+        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+          <div id="progressBar" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Log -->
+      <div id="progressLog" class="bg-slate-900 text-slate-200 rounded-lg p-3 font-mono text-xs h-96 overflow-y-auto space-y-1">
+        <div class="text-slate-500 italic">Submit a query to see live progress...</div>
+      </div>
+    </div>
+
+    <!-- Result Card -->
+    <div id="resultCard" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Result</h2>
+        <div class="flex gap-2">
+          <a id="dlMd" href="#" class="px-3 py-1.5 text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Markdown
+          </a>
+          <a id="dlPdf" href="#" class="px-3 py-1.5 text-xs font-medium bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            PDF
+          </a>
+        </div>
+      </div>
+      <div id="resultPreview" class="prose prose-sm max-w-none text-slate-700 max-h-64 overflow-y-auto border border-slate-100 rounded-lg p-3 bg-slate-50"></div>
+    </div>
+  </section>
+</main>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
